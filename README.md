@@ -18,6 +18,7 @@ npm i @google/clasp -g
 clasp push
 ```
 
+- https://developers.google.com/datastudio/connector/reference
 - https://github.com/google/clasp
 - https://github.com/googledatastudio/community-connectors/blob/master/kaggle/README.md 
 
