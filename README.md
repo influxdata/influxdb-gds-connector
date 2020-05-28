@@ -26,6 +26,9 @@ Try it: https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbw
 - https://github.com/OlegOdnoral/RA_GoogleDataStudio_Adapter/blob/master/src/main.js
 - https://github.com/the-unbelievable-machine/mite-js-google-datastudio-connector
 
+##### TODO:
+1. v1 support
+1. custom FLUX
 
 [Data Studio]: https://datastudio.google.com
 [Community Connector]: https://developers.google.com/datastudio/connector
