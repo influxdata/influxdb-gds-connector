@@ -1,7 +1,9 @@
+const InfluxDBClient = require("../src/InfluxDBClient");
+
 let client;
 
 beforeEach(() => {
-  client = require("../src/InfluxDBClient");
+  client = new InfluxDBClient();
 });
 
 test("get measurements", () => {

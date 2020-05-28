@@ -4,4 +4,5 @@ InfluxDBClient.prototype.getMeasurements = function() {
   return ["cpu", "mem"];
 };
 
-module.exports = new InfluxDBClient();
+// Needed for testing
+module.exports = InfluxDBClient;
