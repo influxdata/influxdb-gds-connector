@@ -17,13 +17,7 @@ This Community Connector uses the [InfluxDB API].
 
 #### Developers
 
-```bash
-# install clasp    
-npm i @google/clasp -g
-
-# publish to script.google.com
-clasp push
-```
+Try it: https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs
 
 - https://developers.google.com/datastudio/connector
 - https://developers.google.com/datastudio/connector/reference
