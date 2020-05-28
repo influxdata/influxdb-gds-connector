@@ -12,8 +12,8 @@
     "addonUrl": "https://github.com/bonitoo-io/influxdb-connector/blob/master/README.md",
     "supportUrl": "https://github.com/bonitoo-io/influxdb-connector/issues/new?title=InfluxDB%20Connector%20Issue",
     "shortDescription": "Connect to and visualize InfluxDB time series data.",
-    "description": "Connect to and visualize InfluxDB time series data. This connector supports one measurement from defined bucket and organization for each data source. Add the connector multiple times for multiple data sources. How to retrieve the required information in the InfluxDB UI: https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/ https://v2.docs.influxdata.com/v2.0/organizations/buckets/view-buckets https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/.",
-    "authType": ["KEY"],
+    "description": "Connect to and visualize InfluxDB time series data. This connector supports one measurement from defined bucket and organization for each data source. Add the connector multiple times for multiple data sources.",
+    "authType": ["NONE"],
     "feeType": ["FREE"]
   }
 }

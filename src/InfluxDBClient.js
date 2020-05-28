@@ -5,4 +5,5 @@ InfluxDBClient.prototype.getMeasurements = function() {
 };
 
 // Needed for testing
+var module = module || {};
 module.exports = InfluxDBClient;

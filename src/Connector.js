@@ -1,8 +1,38 @@
 var cc = DataStudioApp.createCommunityConnector();
 
+/**
+ * Returns the Auth Type of this connector.
+ * @return {object} The Auth type.
+ */
+function getAuthType() {
+  return cc
+    .newAuthTypeResponse()
+    .setAuthType(cc.AuthType.NONE)
+    .build();
+}
+
+/**
+ * This checks whether the current user is an admin user of the connector.
+ *
+ * @returns {boolean} Returns true if the current authenticated user at the time
+ * of function execution is an admin user of the connector. If the function is
+ * omitted or if it returns false, then the current user will not be considered
+ * an admin user of the connector.
+ */
+function isAdminUser() {
+  return false;
+}
+
 // https://developers.google.com/datastudioUrlFetchApp/connector/build#define_the_fields_with_getschema
-function getFields() {
+function getFields(request) {
   var fields = cc.getFields();
+  var types = cc.FieldType;
+
+  fields
+    .newDimension()
+    .setId("measurement")
+    .setName("Measurement")
+    .setType(types.TEXT);
 
   return fields;
 }
@@ -10,11 +40,35 @@ function getFields() {
 // https://developers.google.com/datastudio/connector/reference#getconfig
 function getConfig(request) {
   var config = cc.getConfig();
+
+  config
+    .newTextInput()
+    .setId("INFLUXDB_URL")
+    .setName("InfluxDB URL")
+    .setHelpText("e.g. https://us-west-2-1.aws.cloud2.influxdata.com");
+
+  config
+    .newInfo()
+    .setId("instructions-token")
+    .setText(
+      "How to retrieve the token in the InfluxDB UI: https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/."
+    );
+
+  config
+    .newTextInput()
+    .setId("INFLUXDB_TOKEN")
+    .setName("Token")
+    .setHelpText(
+      "e.g. 2gihWWvM3_r1Q58GwSsF03iR9wsnjS4X6qNP9SLKj5eURe5-_eR0HMia-gU1gSAJ8SiCIzymRLgU1pmTV-0dDA=="
+    );
+
   return config.build();
 }
 
 function getSchema(request) {
-  return { schema: getFields().build() };
+  validateConfig(request.configParams);
+  var fields = getFields(request).build();
+  return { schema: fields };
 }
 
 function getData(request) {
@@ -33,60 +87,28 @@ function getData(request) {
 }
 
 /**
- * Returns the Auth Type of this connector.
- * @return {object} The Auth type.
+ * Validate config object and throw error if anything wrong.
+ *
+ * @param  {Object} configParams Config object supplied by user.
  */
-function getAuthType() {
-  return cc
-    .newAuthTypeResponse()
-    .setAuthType(cc.AuthType.KEY)
-    .setHelpUrl(
-      "https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/"
-    )
-    .build();
-}
-
-/**
- * Resets the auth service.
- */
-function resetAuth() {
-  var userProperties = PropertiesService.getUserProperties();
-  userProperties.deleteProperty("dscc.key");
-}
-
-/**
- * Returns true if the auth service has access.
- * @return {boolean} True if the auth service has access.
- */
-function isAuthValid() {
-  var userProperties = PropertiesService.getUserProperties();
-  var key = userProperties.getProperty("dscc.key");
-  // This assumes you have a validateKey function that can validate
-  // if the key is valid.
-  return validateKey(key);
-}
-
-/**
- * Sets the credentials.
- * @param {Request} request The set credentials request.
- * @return {object} An object with an errorCode.
- */
-function setCredentials(request) {
-  var key = request.key;
-
-  var validKey = validateKey(key);
-  if (!validKey) {
-    return {
-      errorCode: "INVALID_CREDENTIALS"
-    };
+function validateConfig(configParams) {
+  configParams = configParams || {};
+  if (!configParams.INFLUXDB_URL) {
+    throwUserError("InfluxDB URL should be valid URL.");
   }
-  var userProperties = PropertiesService.getUserProperties();
-  userProperties.setProperty("dscc.key", key);
-  return {
-    errorCode: "NONE"
-  };
+  if (!configParams.INFLUXDB_TOKEN) {
+    throwUserError("InfluxDB TOKEN should be defined.");
+  }
 }
 
-function validateKey(key) {
-  return true;
+/**
+ * Throws User-facing errors.
+ *
+ * @param  {string} message Error message.
+ */
+function throwUserError(message) {
+  DataStudioApp.createCommunityConnector()
+    .newUserError()
+    .setText(message)
+    .throwException();
 }
