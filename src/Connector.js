@@ -91,17 +91,19 @@ function getConfig(request) {
       .setIsDynamic(true);
 
     try {
-      let buckets = client.getBuckets(configParams);
+      let buckets = client.getBuckets(configParams).sort();
       buckets.forEach(function(bucket) {
         select.addOption(
-            config
-                .newOptionBuilder()
-                .setLabel(bucket)
-                .setValue(bucket)
+          config
+            .newOptionBuilder()
+            .setLabel(bucket)
+            .setValue(bucket)
         );
       });
     } catch (e) {
-      throwUserError(`"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`);
+      throwUserError(
+        `"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`
+      );
     }
   }
 

@@ -17,16 +17,19 @@ InfluxDBClient.prototype.validateConfig = function(configParams) {
   let errors = [];
   configParams = configParams || {};
   if (!configParams.INFLUXDB_URL) {
-    errors.push("InfluxDB URL should be defined.");
+    errors.push("URL to connect should be defined.");
   }
   if (!configParams.INFLUXDB_TOKEN) {
-    errors.push("InfluxDB Token should be defined.");
+    errors.push("Token should be defined.");
   }
   if (!configParams.INFLUXDB_ORG) {
-    errors.push("InfluxDB Organization should be defined.");
+    errors.push("Organization should be defined.");
   }
   if (!configParams.INFLUXDB_BUCKET) {
-    errors.push("InfluxDB Bucket should be defined.");
+    errors.push("Bucket should be defined.");
+  }
+  if (!configParams.INFLUXDB_MEASUREMENT) {
+    errors.push("Measurement should be defined.");
   }
   return errors.join(" ");
 };
