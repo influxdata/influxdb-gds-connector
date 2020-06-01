@@ -12,6 +12,7 @@
     "try_production": "dscc-scripts connector try_production",
     "try_latest": "dscc-scripts connector try_latest",
     "update_production": "dscc-scripts connector update_production",
+    "deploy": "yarn push && yarn update_production",
     "test": "yarn prettier && yarn jest",
     "test:ci": "yarn prettier && yarn jest --coverage"
   },

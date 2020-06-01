@@ -17,7 +17,10 @@ InfluxDBClient.prototype.validateConfig = function(configParams) {
     errors.push("InfluxDB URL should be defined.");
   }
   if (!configParams.INFLUXDB_TOKEN) {
-    errors.push("InfluxDB TOKEN should be valid URL.");
+    errors.push("InfluxDB TOKEN should be defined.");
+  }
+  if (!configParams.INFLUXDB_ORG) {
+    errors.push("InfluxDB Organization should be defined.");
   }
   return errors.join(" ");
 };

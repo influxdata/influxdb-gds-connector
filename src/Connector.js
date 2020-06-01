@@ -1,5 +1,4 @@
 var cc = DataStudioApp.createCommunityConnector();
-var client = new InfluxDBClient();
 
 /**
  * Returns the Auth Type of this connector.
@@ -63,6 +62,21 @@ function getConfig(request) {
       "e.g. 2gihWWvM3_r1Q58GwSsF03iR9wsnjS4X6qNP9SLKj5eURe5-_eR0HMia-gU1gSAJ8SiCIzymRLgU1pmTV-0dDA=="
     );
 
+  config
+    .newInfo()
+    .setId("instructions-org")
+    .setText(
+      "How to retrieve the organization in the InfluxDB UI: https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/."
+    );
+
+  config
+    .newTextInput()
+    .setId("INFLUXDB_ORG")
+    .setName("Organization")
+    .setHelpText("e.g. my-org");
+
+  config.setDateRangeRequired(true);
+
   return config.build();
 }
 
@@ -93,6 +107,7 @@ function getData(request) {
  * @param  {Object} configParams Config object supplied by user.
  */
 function validateConfig(configParams) {
+  const client = new InfluxDBClient();
   let errors = client.validateConfig(configParams);
   if (errors) {
     throwUserError(errors);
