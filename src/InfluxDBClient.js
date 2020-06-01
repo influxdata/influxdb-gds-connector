@@ -25,9 +25,18 @@ InfluxDBClient.prototype.validateConfig = function(configParams) {
   if (!configParams.INFLUXDB_ORG) {
     errors.push("InfluxDB Organization should be defined.");
   }
+  if (!configParams.INFLUXDB_BUCKET) {
+    errors.push("InfluxDB Bucket should be defined.");
+  }
   return errors.join(" ");
 };
 
+/***
+ * Get Bucket names for configured URL, Org and Token.
+ *
+ * @param configParams configuration
+ * @returns {[string]} bucket names
+ */
 InfluxDBClient.prototype.getBuckets = function(configParams) {
   const options = {
     method: "post",

@@ -9,6 +9,7 @@ beforeEach(() => {
   validConfigurations.INFLUXDB_URL = "http://localhost:9999";
   validConfigurations.INFLUXDB_TOKEN = "my-token";
   validConfigurations.INFLUXDB_ORG = "my-org";
+  validConfigurations.INFLUXDB_BUCKET = "my-bucket";
 });
 
 test("success", () => {
@@ -19,7 +20,7 @@ test("success", () => {
 test("fail", () => {
   let errors = client.validateConfig({});
   expect(errors).toEqual(
-    "InfluxDB URL should be defined. InfluxDB Token should be defined. InfluxDB Organization should be defined."
+    "InfluxDB URL should be defined. InfluxDB Token should be defined. InfluxDB Organization should be defined. InfluxDB Bucket should be defined."
   );
 });
 
@@ -57,4 +58,16 @@ test("empty Org", () => {
   validConfigurations.INFLUXDB_ORG = "";
   let errors = client.validateConfig(validConfigurations);
   expect(errors).toEqual("InfluxDB Organization should be defined.");
+});
+
+test("without Bucket", () => {
+  delete validConfigurations.INFLUXDB_BUCKET;
+  let errors = client.validateConfig(validConfigurations);
+  expect(errors).toEqual("InfluxDB Bucket should be defined.");
+});
+
+test("empty Bucket", () => {
+  validConfigurations.INFLUXDB_BUCKET = "";
+  let errors = client.validateConfig(validConfigurations);
+  expect(errors).toEqual("InfluxDB Bucket should be defined.");
 });

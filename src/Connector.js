@@ -39,7 +39,9 @@ function getFields(request) {
 
 // https://developers.google.com/datastudio/connector/reference#getconfig
 function getConfig(request) {
-  var config = cc.getConfig();
+  const client = new InfluxDBClient();
+  const configParams = request.configParams;
+  const config = cc.getConfig();
 
   config
     .newTextInput()
@@ -74,6 +76,38 @@ function getConfig(request) {
     .setId("INFLUXDB_ORG")
     .setName("Organization")
     .setHelpText("e.g. my-org");
+
+  let isConfigEmpty = configParams === undefined;
+
+  if (
+    !isConfigEmpty &&
+    configParams.INFLUXDB_URL &&
+    configParams.INFLUXDB_TOKEN
+  ) {
+    let select = config
+      .newSelectSingle()
+      .setId("INFLUXDB_BUCKET")
+      .setName("Bucket")
+      .setIsDynamic(true);
+
+    let buckets = client.getBuckets(configParams);
+    buckets.forEach(function(bucket) {
+      select.addOption(
+        config
+          .newOptionBuilder()
+          .setLabel(bucket)
+          .setValue(bucket)
+      );
+    });
+  }
+
+  var isBucketEmpty =
+    isConfigEmpty ||
+    configParams.INFLUXDB_BUCKET === undefined ||
+    configParams.INFLUXDB_BUCKET === null;
+  if (isBucketEmpty) {
+    config.setIsSteppedConfig(true);
+  }
 
   config.setDateRangeRequired(true);
 
