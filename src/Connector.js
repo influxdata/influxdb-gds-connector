@@ -90,15 +90,19 @@ function getConfig(request) {
       .setName("Bucket")
       .setIsDynamic(true);
 
-    let buckets = client.getBuckets(configParams);
-    buckets.forEach(function(bucket) {
-      select.addOption(
-        config
-          .newOptionBuilder()
-          .setLabel(bucket)
-          .setValue(bucket)
-      );
-    });
+    try {
+      let buckets = client.getBuckets(configParams);
+      buckets.forEach(function(bucket) {
+        select.addOption(
+            config
+                .newOptionBuilder()
+                .setLabel(bucket)
+                .setValue(bucket)
+        );
+      });
+    } catch (e) {
+      throwUserError(`"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`);
+    }
   }
 
   var isBucketEmpty =
