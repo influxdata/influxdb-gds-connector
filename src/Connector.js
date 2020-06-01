@@ -50,13 +50,6 @@ function getConfig(request) {
     .setHelpText("e.g. https://us-west-2-1.aws.cloud2.influxdata.com");
 
   config
-    .newInfo()
-    .setId("instructions-token")
-    .setText(
-      "How to retrieve the token in the InfluxDB UI: https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/."
-    );
-
-  config
     .newTextInput()
     .setId("INFLUXDB_TOKEN")
     .setName("Token")
@@ -65,17 +58,24 @@ function getConfig(request) {
     );
 
   config
-    .newInfo()
-    .setId("instructions-org")
-    .setText(
-      "How to retrieve the organization in the InfluxDB UI: https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/."
-    );
+      .newInfo()
+      .setId("instructions-token")
+      .setText(
+          "How to retrieve the Token - https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/."
+      );
 
   config
     .newTextInput()
     .setId("INFLUXDB_ORG")
     .setName("Organization")
     .setHelpText("e.g. my-org");
+
+  config
+      .newInfo()
+      .setId("instructions-org")
+      .setText(
+          "How to retrieve the Organization - https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/."
+      );
 
   let isConfigEmpty = configParams === undefined;
 
@@ -107,11 +107,46 @@ function getConfig(request) {
     }
   }
 
-  var isBucketEmpty =
+  if (
+    !isConfigEmpty &&
+    configParams.INFLUXDB_URL &&
+    configParams.INFLUXDB_TOKEN &&
+    configParams.INFLUXDB_BUCKET
+  ) {
+    let select = config
+      .newSelectSingle()
+      .setId("INFLUXDB_MEASUREMENT")
+      .setName("Measurement")
+      .setIsDynamic(true);
+
+    try {
+      let buckets = client.getMeasurements(configParams).sort();
+      buckets.forEach(function(measurement) {
+        select.addOption(
+          config
+            .newOptionBuilder()
+            .setLabel(measurement)
+            .setValue(measurement)
+        );
+      });
+    } catch (e) {
+      throwUserError(
+        `"GetMeasurements from: ${configParams.INFLUXDB_URL}" returned an error:${e}`
+      );
+    }
+  }
+
+  let isBucketEmpty =
     isConfigEmpty ||
     configParams.INFLUXDB_BUCKET === undefined ||
     configParams.INFLUXDB_BUCKET === null;
-  if (isBucketEmpty) {
+
+  let isMeasurementEmpty =
+    isConfigEmpty ||
+    configParams.INFLUXDB_MEASUREMENT === undefined ||
+    configParams.INFLUXDB_MEASUREMENT === null;
+
+  if (isBucketEmpty || isMeasurementEmpty) {
     config.setIsSteppedConfig(true);
   }
 

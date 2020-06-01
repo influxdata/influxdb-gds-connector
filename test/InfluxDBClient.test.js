@@ -53,6 +53,42 @@ describe("get buckets", () => {
   });
 });
 
+describe("get measurements", () => {
+  test("success", () => {
+    // noinspection JSConsecutiveCommasInArrayLiteral
+    const csv = [
+      [, "result", "table", "_value"],
+      [, "_result", 0, "circleci"],
+      [, "_result", 0, "github_repository"],
+      [, , ,]
+    ];
+
+    Utilities.parseCsv.mockReturnValueOnce(csv);
+
+    let configParams = {};
+    configParams.INFLUXDB_URL = "http://localhost:9999";
+    configParams.INFLUXDB_TOKEN = "my-token";
+    configParams.INFLUXDB_ORG = "my-org";
+    configParams.INFLUXDB_BUCKET = "my-bucket";
+
+    let buckets = client.getMeasurements(configParams);
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1);
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      "http://localhost:9999/api/v2/query?org=my-org"
+    );
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: "application/vnd.flux",
+      headers: { Accept: "application/csv", Authorization: "Token my-token" },
+      method: "post",
+      payload:
+        'import "influxdata/influxdb/v1" v1.measurements(bucket: "my-bucket")'
+    });
+
+    expect(buckets).toHaveLength(2);
+    expect(buckets).toEqual(["circleci", "github_repository"]);
+  });
+});
+
 describe("build URL", () => {
   test("value", () => {
     let configParams = {};

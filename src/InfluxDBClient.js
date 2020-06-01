@@ -1,7 +1,10 @@
 function InfluxDBClient() {}
 
-const QUERY_BUCKETS =
+const QUERY_BUCKETS = () =>
   'buckets() |> rename(columns: {"name": "_value"}) |> keep(columns: ["_value"]) |> sort(columns: ["_value"], desc: false)';
+
+const QUERY_MEASUREMENTS = bucket_name =>
+  `import "influxdata/influxdb/v1" v1.measurements(bucket: "${bucket_name}")`;
 
 InfluxDBClient.prototype.getMeasurements = function() {
   return ["cpu", "mem"];
@@ -34,16 +37,31 @@ InfluxDBClient.prototype.validateConfig = function(configParams) {
   return errors.join(" ");
 };
 
-/***
- * Get Bucket names for configured URL, Org and Token.
+/**
+ * Get Buckets names for configured URL, Org and Token.
  *
  * @param configParams configuration
- * @returns {[string]} bucket names
+ * @returns {[string]} buckets names
  */
 InfluxDBClient.prototype.getBuckets = function(configParams) {
+  return this._schemaQuery(configParams, QUERY_BUCKETS());
+};
+
+/**
+ * Get Measurements names for configured URL, Org, Token and Bucket.
+ *
+ * @param configParams configuration
+ * @returns {[]} measurements names
+ */
+InfluxDBClient.prototype.getMeasurements = function(configParams) {
+  let query = QUERY_MEASUREMENTS(configParams.INFLUXDB_BUCKET);
+  return this._schemaQuery(configParams, query);
+};
+
+InfluxDBClient.prototype._schemaQuery = function(configParams, query) {
   const options = {
     method: "post",
-    payload: QUERY_BUCKETS,
+    payload: query,
     contentType: "application/vnd.flux",
     headers: {
       Authorization: "Token " + configParams.INFLUXDB_TOKEN,
