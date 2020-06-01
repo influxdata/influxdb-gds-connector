@@ -1,4 +1,5 @@
 var cc = DataStudioApp.createCommunityConnector();
+var client = new InfluxDBClient();
 
 /**
  * Returns the Auth Type of this connector.
@@ -92,12 +93,9 @@ function getData(request) {
  * @param  {Object} configParams Config object supplied by user.
  */
 function validateConfig(configParams) {
-  configParams = configParams || {};
-  if (!configParams.INFLUXDB_URL) {
-    throwUserError("InfluxDB URL should be valid URL.");
-  }
-  if (!configParams.INFLUXDB_TOKEN) {
-    throwUserError("InfluxDB TOKEN should be defined.");
+  let errors = client.validateConfig(configParams);
+  if (errors) {
+    throwUserError(errors);
   }
 }
 
