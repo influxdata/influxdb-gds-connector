@@ -50,6 +50,13 @@ function getConfig(request) {
     .setHelpText("e.g. https://us-west-2-1.aws.cloud2.influxdata.com");
 
   config
+    .newInfo()
+    .setId("instructions-token")
+    .setText(
+      "How to retrieve the Token - https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/."
+    );
+
+  config
     .newTextInput()
     .setId("INFLUXDB_TOKEN")
     .setName("Token")
@@ -58,24 +65,17 @@ function getConfig(request) {
     );
 
   config
-      .newInfo()
-      .setId("instructions-token")
-      .setText(
-          "How to retrieve the Token - https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/."
-      );
+    .newInfo()
+    .setId("instructions-org")
+    .setText(
+      "How to retrieve the Organization - https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/."
+    );
 
   config
     .newTextInput()
     .setId("INFLUXDB_ORG")
     .setName("Organization")
     .setHelpText("e.g. my-org");
-
-  config
-      .newInfo()
-      .setId("instructions-org")
-      .setText(
-          "How to retrieve the Organization - https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/."
-      );
 
   let isConfigEmpty = configParams === undefined;
 

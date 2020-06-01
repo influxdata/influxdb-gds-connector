@@ -6,10 +6,6 @@ const QUERY_BUCKETS = () =>
 const QUERY_MEASUREMENTS = bucket_name =>
   `import "influxdata/influxdb/v1" v1.measurements(bucket: "${bucket_name}")`;
 
-InfluxDBClient.prototype.getMeasurements = function() {
-  return ["cpu", "mem"];
-};
-
 /**
  * Validate configuration of Connector.
  *
