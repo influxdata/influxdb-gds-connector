@@ -19,7 +19,7 @@ test("success", () => {
 test("fail", () => {
   let errors = client.validateConfig({});
   expect(errors).toEqual(
-    "InfluxDB URL should be defined. InfluxDB TOKEN should be defined. InfluxDB Organization should be defined."
+    "InfluxDB URL should be defined. InfluxDB Token should be defined. InfluxDB Organization should be defined."
   );
 });
 
@@ -38,13 +38,13 @@ test("empty URL", () => {
 test("without Token", () => {
   delete validConfigurations.INFLUXDB_TOKEN;
   let errors = client.validateConfig(validConfigurations);
-  expect(errors).toEqual("InfluxDB TOKEN should be defined.");
+  expect(errors).toEqual("InfluxDB Token should be defined.");
 });
 
 test("empty Token", () => {
   validConfigurations.INFLUXDB_TOKEN = "";
   let errors = client.validateConfig(validConfigurations);
-  expect(errors).toEqual("InfluxDB TOKEN should be defined.");
+  expect(errors).toEqual("InfluxDB Token should be defined.");
 });
 
 test("without Org", () => {
