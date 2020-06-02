@@ -148,6 +148,7 @@ InfluxDBClient.prototype._buildURL = function(configParams) {
   return url;
 };
 
+// istanbul ignore next
 // Needed for testing
 var module = module || {};
 module.exports = InfluxDBClient;

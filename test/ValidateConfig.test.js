@@ -19,7 +19,7 @@ test("success", () => {
 });
 
 test("fail", () => {
-  let errors = client.validateConfig({});
+  let errors = client.validateConfig();
   expect(errors).toEqual(
     "URL to connect should be defined. Token should be defined. Organization should be defined. Bucket should be defined. Measurement should be defined."
   );

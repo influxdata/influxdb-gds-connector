@@ -53,17 +53,23 @@ function getFields(request, cached) {
     }
   }
 
-  let fields = client.getFields(request.configParams);
-  let cacheValue = JSON.stringify(fields);
+  try {
+    let fields = client.getFields(request.configParams);
+    let cacheValue = JSON.stringify(fields);
 
-  Logger.log(
-    "Store cached schema for key: %s, schema: %s",
-    cacheKey,
-    cacheValue
-  );
-  cache.put(cacheKey, cacheValue);
+    Logger.log(
+      "Store cached schema for key: %s, schema: %s",
+      cacheKey,
+      cacheValue
+    );
+    cache.put(cacheKey, cacheValue);
 
-  return fields;
+    return fields;
+  } catch (e) {
+    throwUserError(
+      `"GetFields from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`
+    );
+  }
 }
 
 // https://developers.google.com/datastudio/connector/reference#getconfig
