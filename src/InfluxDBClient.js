@@ -16,22 +16,20 @@ v1.tagKeys(
 )
 |> filter(fn: (r) => r._value != "_start" and r._value != "_stop" and r._value != "_measurement" and r._value != "_field")`;
 
-// import "influxdata/influxdb/v1"
-
-// v1.measurementFieldKeys(
-//     bucket: "github",
-//     measurement: "circleci",
-//     start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
-// )
-
-// const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
-//   let concat = tags
-//     .map(function(tag) {
-//       return `"${tag}"`;
-//     })
-//     .join(", ");
-//   return `from(bucket: "${bucket_name}") |> range(start: time(v: 1)) |> filter(fn: (r) => r["_measurement"] == "${measurement_name}") |> drop(columns: [${concat}]) |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") |> limit(n:1)`;
-// };
+const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
+  let concat = tags
+    .map(function(tag) {
+      return `"${tag}"`;
+    })
+    .join(", ");
+  return `from(bucket: "${bucket_name}")
+  |> range(start: time(v: 1))
+  |> filter(fn: (r) => r["_measurement"] == "${measurement_name}")
+  |> drop(columns: [${concat}])
+  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+  |> drop(columns: ["_start", "_stop", "_time", "_measurement"])
+  |> limit(n:1)`;
+};
 
 /**
  * Validate configuration of Connector.
@@ -67,7 +65,7 @@ InfluxDBClient.prototype.validateConfig = function(configParams) {
  * @returns {[string]} buckets names
  */
 InfluxDBClient.prototype.getBuckets = function(configParams) {
-  return this._schemaQuery(configParams, QUERY_BUCKETS());
+  return this._query(configParams, QUERY_BUCKETS());
 };
 
 /**
@@ -78,7 +76,7 @@ InfluxDBClient.prototype.getBuckets = function(configParams) {
  */
 InfluxDBClient.prototype.getMeasurements = function(configParams) {
   let query = QUERY_MEASUREMENTS(configParams.INFLUXDB_BUCKET);
-  return this._schemaQuery(configParams, query);
+  return this._query(configParams, query);
 };
 
 /**
@@ -88,13 +86,13 @@ InfluxDBClient.prototype.getMeasurements = function(configParams) {
  * @returns fields definition
  */
 InfluxDBClient.prototype.getFields = function(configParams) {
-  var fields = [];
+  const fields = [];
 
-  let query = QUERY_TAGS(
+  let queryTags = QUERY_TAGS(
     configParams.INFLUXDB_BUCKET,
     configParams.INFLUXDB_MEASUREMENT
   );
-  let tags = this._schemaQuery(configParams, query);
+  let tags = this._query(configParams, queryTags);
 
   tags.forEach(tag => {
     const field = {};
@@ -106,10 +104,36 @@ InfluxDBClient.prototype.getFields = function(configParams) {
     fields.push(field);
   });
 
+  let queryFields = QUERY_FIELDS(
+    configParams.INFLUXDB_BUCKET,
+    configParams.INFLUXDB_MEASUREMENT,
+    tags
+  );
+
+  this._query(configParams, queryFields, textContent => {
+    let types = [];
+    let names = [];
+    textContent.split("\n").forEach(line => {
+      if (line.startsWith("#datatype")) {
+        types = line.split(",").slice(3);
+      } else if (line.startsWith(",result,table,")) {
+        names = line.split(",").slice(3);
+      }
+    });
+
+    types.forEach(function(type, index) {
+      console.log("Name:" + names[index] + " type: " + type);
+    });
+  });
+
   return fields;
 };
 
-InfluxDBClient.prototype._schemaQuery = function(configParams, query) {
+InfluxDBClient.prototype._query = function(
+  configParams,
+  query,
+  mapping = this._extractSchema
+) {
   const options = {
     method: "post",
     payload: query,
@@ -121,9 +145,14 @@ InfluxDBClient.prototype._schemaQuery = function(configParams, query) {
   };
   let url = this._buildURL(configParams);
   const response = UrlFetchApp.fetch(url, options).getContentText();
-  const csv = Utilities.parseCsv(response, ",");
 
-  let buckets = [];
+  return mapping(response);
+};
+
+InfluxDBClient.prototype._extractSchema = function(textContent) {
+  const csv = Utilities.parseCsv(textContent, ",");
+
+  let values = [];
   let value_index;
   csv.forEach(function(row) {
     if (!value_index) {
@@ -131,11 +160,11 @@ InfluxDBClient.prototype._schemaQuery = function(configParams, query) {
     } else {
       let bucket = row[value_index];
       if (bucket) {
-        buckets.push(bucket);
+        values.push(bucket);
       }
     }
   });
-  return buckets;
+  return values;
 };
 
 InfluxDBClient.prototype._buildURL = function(configParams) {
