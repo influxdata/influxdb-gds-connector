@@ -6,6 +6,33 @@ const QUERY_BUCKETS = () =>
 const QUERY_MEASUREMENTS = bucket_name =>
   `import "influxdata/influxdb/v1" v1.measurements(bucket: "${bucket_name}")`;
 
+const QUERY_TAGS = (bucket_name, measurement_name) =>
+  `import "influxdata/influxdb/v1"
+
+v1.tagKeys(
+  bucket: "${bucket_name}",
+  predicate: (r) => r._measurement == "${measurement_name}",
+  start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
+)
+|> filter(fn: (r) => r._value != "_start" and r._value != "_stop" and r._value != "_measurement" and r._value != "_field")`;
+
+// import "influxdata/influxdb/v1"
+
+// v1.measurementFieldKeys(
+//     bucket: "github",
+//     measurement: "circleci",
+//     start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
+// )
+
+// const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
+//   let concat = tags
+//     .map(function(tag) {
+//       return `"${tag}"`;
+//     })
+//     .join(", ");
+//   return `from(bucket: "${bucket_name}") |> range(start: time(v: 1)) |> filter(fn: (r) => r["_measurement"] == "${measurement_name}") |> drop(columns: [${concat}]) |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value") |> limit(n:1)`;
+// };
+
 /**
  * Validate configuration of Connector.
  *
@@ -52,6 +79,34 @@ InfluxDBClient.prototype.getBuckets = function(configParams) {
 InfluxDBClient.prototype.getMeasurements = function(configParams) {
   let query = QUERY_MEASUREMENTS(configParams.INFLUXDB_BUCKET);
   return this._schemaQuery(configParams, query);
+};
+
+/**
+ * Get Fields names for configured URL, Org, Token, Bucket and Measurement.
+ *
+ * @param configParams configuration
+ * @returns fields definition
+ */
+InfluxDBClient.prototype.getFields = function(configParams) {
+  var fields = [];
+
+  let query = QUERY_TAGS(
+    configParams.INFLUXDB_BUCKET,
+    configParams.INFLUXDB_MEASUREMENT
+  );
+  let tags = this._schemaQuery(configParams, query);
+
+  tags.forEach(tag => {
+    const field = {};
+    field.name = tag;
+    field.label = tag;
+    field.dataType = "STRING";
+    field.semantics = {};
+    field.semantics.conceptType = "DIMENSION";
+    fields.push(field);
+  });
+
+  return fields;
 };
 
 InfluxDBClient.prototype._schemaQuery = function(configParams, query) {

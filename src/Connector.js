@@ -23,16 +23,45 @@ function isAdminUser() {
   return false;
 }
 
-// https://developers.google.com/datastudioUrlFetchApp/connector/build#define_the_fields_with_getschema
-function getFields(request) {
-  var fields = cc.getFields();
-  var types = cc.FieldType;
+/**
+ * Get Schema fields for given configuration.
+ *
+ * @param request
+ * @param cached {boolean}  use cached values
+ * @returns fields for given configuration
+ */
+function getFields(request, cached) {
+  const client = new InfluxDBClient();
+  validateConfig(request.configParams);
 
-  fields
-    .newDimension()
-    .setId("measurement")
-    .setName("Measurement")
-    .setType(types.TEXT);
+  const cache = CacheService.getScriptCache();
+  const cacheKey = [
+    request.configParams.INFLUXDB_URL,
+    request.configParams.INFLUXDB_BUCKET,
+    request.configParams.INFLUXDB_MEASUREMENT
+  ].join("#");
+
+  if (cached) {
+    const cachedSchema = JSON.parse(cache.get(cacheKey));
+    if (cachedSchema !== null) {
+      Logger.log(
+        "Use cached schema for key: %s, schema: %s",
+        cacheKey,
+        cachedSchema
+      );
+      return cachedSchema;
+    }
+  }
+
+  let fields = client.getFields(request.configParams);
+  let cacheValue = JSON.stringify(fields);
+
+  Logger.log(
+    "Store cached schema for key: %s, schema: %s",
+    cacheKey,
+    cacheValue
+  );
+  cache.put(cacheKey, cacheValue);
 
   return fields;
 }
@@ -156,22 +185,21 @@ function getConfig(request) {
 }
 
 function getSchema(request) {
-  validateConfig(request.configParams);
-  var fields = getFields(request).build();
+  const fields = getFields(request, false);
   return { schema: fields };
 }
 
 function getData(request) {
-  request.configParams = validateConfig(request.configParams);
+  const names = request.fields.map(field => field.name);
 
-  var requestedFields = getFields().forIds(
-    request.fields.map(function(field) {
-      return field.name;
-    })
+  let fieldsFiltered = getFields(request, true).filter(field =>
+    names.includes(field.name)
   );
 
+  Logger.log("Use fields: %s for requested names: %s", fieldsFiltered, names);
+
   return {
-    schema: requestedFields.build(),
+    schema: fieldsFiltered,
     rows: []
   };
 }
