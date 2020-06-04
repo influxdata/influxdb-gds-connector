@@ -1,7 +1,8 @@
-# InfluxDB v2 Community Connector for Data Studio
+# InfluxDB Connector for Data Studio
 
 [![CircleCI](https://circleci.com/gh/bonitoo-io/influxdb-connector.svg?style=svg)](https://circleci.com/gh/bonitoo-io/influxdb-connector)
 [![codecov](https://codecov.io/gh/bonitoo-io/influxdb-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/influxdb-connector)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![License](https://img.shields.io/github/license/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues-raw/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/pulls)
@@ -9,11 +10,9 @@
 
 *This is not an official Google product*
 
-This [Data Studio] [Community Connector] lets users query datasets from
-[InfluxDB v2] instances.
+This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] instances through the [InfluxDB API].
 
-This Community Connector uses the [InfluxDB API].
-
+---
 
 #### Developers
 
@@ -32,6 +31,6 @@ Try it: https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbw
 1. custom FLUX
 
 [Data Studio]: https://datastudio.google.com
-[Community Connector]: https://developers.google.com/datastudio/connector
+[Connector]: https://developers.google.com/datastudio/connector
 [InfluxDB v2]: https://www.influxdata.com/products/influxdb-overview/influxdb-2-0/
 [InfluxDB API]: https://v2.docs.influxdata.com/v2.0/reference/api/
