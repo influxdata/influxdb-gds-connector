@@ -160,8 +160,16 @@ v1.tagKeys(
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1)) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> drop(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\"]) |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> drop(columns: [\\"_start\\", \\"_stop\\", \\"_time\\", \\"_measurement\\"]) |> limit(n:1)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
     });
 
-    expect(buckets).toHaveLength(9);
+    expect(buckets).toHaveLength(11);
     expect(buckets[0]).toEqual({
+      dataType: "STRING",
+      label: "measurement",
+      name: "_measurement",
+      semantics: {
+        conceptType: "DIMENSION"
+      }
+    });
+    expect(buckets[1]).toEqual({
       dataType: "STRING",
       label: "host",
       name: "host",
@@ -169,7 +177,7 @@ v1.tagKeys(
         conceptType: "DIMENSION"
       }
     });
-    expect(buckets[1]).toEqual({
+    expect(buckets[2]).toEqual({
       dataType: "STRING",
       label: "reponame",
       name: "reponame",
@@ -177,7 +185,7 @@ v1.tagKeys(
         conceptType: "DIMENSION"
       }
     });
-    expect(buckets[2]).toEqual({
+    expect(buckets[3]).toEqual({
       dataType: "STRING",
       label: "vcs_url",
       name: "vcs_url",
@@ -185,7 +193,7 @@ v1.tagKeys(
         conceptType: "DIMENSION"
       }
     });
-    expect(buckets[3]).toEqual({
+    expect(buckets[4]).toEqual({
       dataType: "BOOLEAN",
       label: "fieldBool",
       name: "fieldBool",
@@ -194,7 +202,7 @@ v1.tagKeys(
         isReaggregatable: false
       }
     });
-    expect(buckets[4]).toEqual({
+    expect(buckets[5]).toEqual({
       dataType: "NUMBER",
       label: "fieldFloat",
       name: "fieldFloat",
@@ -204,7 +212,7 @@ v1.tagKeys(
         semanticGroup: "NUMBER"
       }
     });
-    expect(buckets[5]).toEqual({
+    expect(buckets[6]).toEqual({
       dataType: "NUMBER",
       label: "fieldInteger",
       name: "fieldInteger",
@@ -214,7 +222,7 @@ v1.tagKeys(
         semanticGroup: "NUMBER"
       }
     });
-    expect(buckets[6]).toEqual({
+    expect(buckets[7]).toEqual({
       dataType: "STRING",
       label: "fieldString",
       name: "fieldString",
@@ -223,7 +231,7 @@ v1.tagKeys(
         isReaggregatable: false
       }
     });
-    expect(buckets[7]).toEqual({
+    expect(buckets[8]).toEqual({
       dataType: "NUMBER",
       label: "fieldUInteger",
       name: "fieldUInteger",
@@ -233,12 +241,23 @@ v1.tagKeys(
         semanticGroup: "NUMBER"
       }
     });
-    expect(buckets[8]).toEqual({
+    expect(buckets[9]).toEqual({
       dataType: "STRING",
       label: "fieldDate",
       name: "fieldDate",
       semantics: {
         conceptType: "METRIC",
+        isReaggregatable: false,
+        semanticGroup: "DATETIME",
+        semanticType: "YEAR_MONTH_DAY_SECOND"
+      }
+    });
+    expect(buckets[10]).toEqual({
+      dataType: "STRING",
+      label: "time",
+      name: "_time",
+      semantics: {
+        conceptType: "DIMENSION",
         isReaggregatable: false,
         semanticGroup: "DATETIME",
         semanticType: "YEAR_MONTH_DAY_SECOND"

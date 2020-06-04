@@ -92,6 +92,14 @@ InfluxDBClient.prototype.getMeasurements = function(configParams) {
 InfluxDBClient.prototype.getFields = function(configParams) {
   const fields = [];
 
+  const measurement = {};
+  measurement.name = "_measurement";
+  measurement.label = "measurement";
+  measurement.dataType = "STRING";
+  measurement.semantics = {};
+  measurement.semantics.conceptType = "DIMENSION";
+  fields.push(measurement);
+
   let queryTags = QUERY_TAGS(
     configParams.INFLUXDB_BUCKET,
     configParams.INFLUXDB_MEASUREMENT
@@ -122,6 +130,17 @@ InfluxDBClient.prototype.getFields = function(configParams) {
   tables.forEach(table => {
     table.fields.forEach(field => fields.push(field));
   });
+
+  const timestamp = {};
+  timestamp.name = "_time";
+  timestamp.label = "time";
+  timestamp.dataType = "STRING";
+  timestamp.semantics = {};
+  timestamp.semantics.isReaggregatable = false;
+  timestamp.semantics.conceptType = "DIMENSION";
+  timestamp.semantics.semanticType = "YEAR_MONTH_DAY_SECOND";
+  timestamp.semantics.semanticGroup = "DATETIME";
+  fields.push(timestamp);
 
   return fields;
 };
