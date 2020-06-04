@@ -1,8 +1,8 @@
-DataStudioApp = jest.fn();
-DataStudioApp.createCommunityConnector = jest.fn();
+DataStudioApp = jest.fn()
+DataStudioApp.createCommunityConnector = jest.fn()
 
-const connector = require("../src/Connector");
+const connector = require('../src/Connector')
 
-test("getAuthType", () => {
-  expect(connector.authType()).toEqual({ type: "NONE" });
-});
+test('getAuthType', () => {
+  expect(connector.authType()).toEqual({type: 'NONE'})
+})

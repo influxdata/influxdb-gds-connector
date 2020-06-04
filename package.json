@@ -27,7 +27,7 @@
     "@google/dscc-scripts": "^1.0.16",
     "jest": "^26.0.1",
     "jest-junit": "^10.0.0",
-    "prettier": "^1.16.4",
+    "prettier": "^2.0.5",
     "@types/google-apps-script": "1.0.14"
   }
 }
