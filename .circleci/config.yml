@@ -24,7 +24,7 @@ jobs:
           name: Send coverage to CodeCov
           command: yarn add --dev codecov && ./node_modules/.bin/codecov
       - store_test_results:
-          path: .
+          path: test-results
 
   deploy:
     docker:
