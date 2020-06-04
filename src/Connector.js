@@ -5,10 +5,7 @@ var cc = DataStudioApp.createCommunityConnector();
  * @return {object} The Auth type.
  */
 function getAuthType() {
-  return cc
-    .newAuthTypeResponse()
-    .setAuthType(cc.AuthType.NONE)
-    .build();
+  return { type: "NONE" };
 }
 
 /**
@@ -238,3 +235,7 @@ function throwUserError(message) {
     .setText(message)
     .throwException();
 }
+
+// Needed for testing
+var module = module || {};
+module.exports = { authType: getAuthType };
