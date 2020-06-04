@@ -1,11 +1,11 @@
 # InfluxDB Connector for Data Studio
 
-[![CircleCI](https://circleci.com/gh/bonitoo-io/influxdb-connector.svg?style=svg)](https://circleci.com/gh/bonitoo-io/influxdb-connector)
-[![codecov](https://codecov.io/gh/bonitoo-io/influxdb-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/influxdb-connector)
+[![CircleCI](https://circleci.com/gh/bonitoo-io/influxdb-gds-connector.svg?style=svg)](https://circleci.com/gh/bonitoo-io/influxdb-gds-connector)
+[![codecov](https://codecov.io/gh/bonitoo-io/influxdb-gds-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/influxdb-gds-connector)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![License](https://img.shields.io/github/license/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues-raw/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/pulls)
+[![License](https://img.shields.io/github/license/bonitoo-io/influxdb-gds-connector.svg)](https://github.com/bonitoo-io/influxdb-gds-connector/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues-raw/bonitoo-io/influxdb-gds-connector.svg)](https://github.com/bonitoo-io/influxdb-gds-connector/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/bonitoo-io/influxdb-gds-connector.svg)](https://github.com/bonitoo-io/influxdb-gds-connector/pulls)
 [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://www.influxdata.com/slack)
 
 *This is not an official Google product.*
