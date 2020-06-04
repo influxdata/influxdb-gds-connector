@@ -14,9 +14,13 @@ This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] inst
 
 ---
 
-#### Developers
+Try it in Google Data Studio:
+ - [from scratch](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
+ - [preconfigured](https://datastudio.google.com/datasources/create?connectorConfig=%7B%22INFLUXDB_URL%22%3A%22https%3A%2F%2Fus-west-2-1.aws.cloud2.influxdata.com%22%2C%22INFLUXDB_TOKEN%22%3A%22JQGzXQvquG3VFy_9L0BXDNwmJF2DiurK1aLBRTMIctODpnlr5kY6gBay3HmtWcRnb81dSM9rb8TEXgmhV2LHjw%3D%3D%22%2C%22INFLUXDB_ORG%22%3A%22jakub_bednar%22%7D&connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
 
-Try it: https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs
+---
+
+#### Development
 
 - https://developers.google.com/datastudio/connector
 - https://developers.google.com/datastudio/connector/reference
