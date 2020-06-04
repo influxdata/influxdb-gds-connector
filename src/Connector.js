@@ -232,4 +232,4 @@ function throwUserError(message) {
 
 // Needed for testing
 var module = module || {}
-module.exports = {authType: getAuthType}
+module.exports = {getAuthType, isAdminUser}
