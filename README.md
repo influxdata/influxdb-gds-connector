@@ -8,7 +8,7 @@
 [![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/bonitoo-io/influxdb-connector.svg)](https://github.com/bonitoo-io/influxdb-connector/pulls)
 [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://www.influxdata.com/slack)
 
-*This is not an official Google product*
+*This is not an official Google product.*
 
 This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] instances through the [InfluxDB API].
 
