@@ -204,6 +204,10 @@ function getData(request) {
 
   Logger.log("Use fields: %s for requested names: %s", fieldsFiltered, names);
 
+  //
+  // sampleExtraction
+  //
+
   return {
     schema: fieldsFiltered,
     rows: []

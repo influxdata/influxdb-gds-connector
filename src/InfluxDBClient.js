@@ -19,16 +19,20 @@ v1.tagKeys(
 const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
   let concat = tags
     .map(function(tag) {
-      return `"${tag}"`;
+      return `\\"${tag}\\"`;
     })
     .join(", ");
-  return `from(bucket: "${bucket_name}")
-  |> range(start: time(v: 1))
-  |> filter(fn: (r) => r["_measurement"] == "${measurement_name}")
-  |> drop(columns: [${concat}])
-  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-  |> drop(columns: ["_start", "_stop", "_time", "_measurement"])
-  |> limit(n:1)`;
+  return (
+    `{"query":"from(bucket: \\"${bucket_name}\\") ` +
+    `|> range(start: time(v: 1)) ` +
+    `|> filter(fn: (r) => r[\\"_measurement\\"] == \\"${measurement_name}\\") ` +
+    `|> drop(columns: [${concat}]) ` +
+    `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") ` +
+    `|> drop(columns: [\\"_start\\", \\"_stop\\", \\"_time\\", \\"_measurement\\"]) ` +
+    `|> limit(n:1)", ` +
+    `"type":"flux", ` +
+    `"dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
+  );
 };
 
 /**
@@ -110,20 +114,13 @@ InfluxDBClient.prototype.getFields = function(configParams) {
     tags
   );
 
-  this._query(configParams, queryFields, textContent => {
-    let types = [];
-    let names = [];
-    textContent.split("\n").forEach(line => {
-      if (line.startsWith("#datatype")) {
-        types = line.split(",").slice(3);
-      } else if (line.startsWith(",result,table,")) {
-        names = line.split(",").slice(3);
-      }
-    });
+  let tables = this._query(configParams, queryFields, {
+    mapping: this._extractData,
+    contentType: "application/json"
+  });
 
-    types.forEach(function(type, index) {
-      console.log("Name:" + names[index] + " type: " + type);
-    });
+  tables.forEach(table => {
+    table.fields.forEach(field => fields.push(field));
   });
 
   return fields;
@@ -132,12 +129,15 @@ InfluxDBClient.prototype.getFields = function(configParams) {
 InfluxDBClient.prototype._query = function(
   configParams,
   query,
-  mapping = this._extractSchema
+  configs = {
+    mapping: this._extractSchema,
+    contentType: "application/vnd.flux"
+  }
 ) {
   const options = {
     method: "post",
     payload: query,
-    contentType: "application/vnd.flux",
+    contentType: configs.contentType,
     headers: {
       Authorization: "Token " + configParams.INFLUXDB_TOKEN,
       Accept: "application/csv"
@@ -146,7 +146,7 @@ InfluxDBClient.prototype._query = function(
   let url = this._buildURL(configParams);
   const response = UrlFetchApp.fetch(url, options).getContentText();
 
-  return mapping(response);
+  return configs.mapping(response);
 };
 
 InfluxDBClient.prototype._extractSchema = function(textContent) {
@@ -167,6 +167,47 @@ InfluxDBClient.prototype._extractSchema = function(textContent) {
   return values;
 };
 
+InfluxDBClient.prototype._extractData = function(textContent) {
+  let processNextTable = true;
+  let table;
+  let tables = [];
+
+  function prepareTable() {
+    if (processNextTable) {
+      table = new InfluxDBTable();
+      tables.push(table);
+      processNextTable = false;
+    }
+  }
+
+  Logger.log("Response from InfluxDB: %s", textContent);
+
+  textContent.split("\n").forEach(line => {
+    if (line.startsWith("#group")) {
+      prepareTable();
+      table.group = line;
+    } else if (line.startsWith("#datatype")) {
+      prepareTable();
+      table.data_types = line;
+    } else if (line.startsWith("#default")) {
+      prepareTable();
+      table.defaults = line;
+    } else if (line.startsWith(",result,table,")) {
+      prepareTable();
+      table.names = line;
+    } else {
+      // process row of table first time => parseSchema,
+      if (!processNextTable) {
+        table.parseSchema();
+        processNextTable = true;
+      }
+      table.data.push(line);
+    }
+  });
+
+  return tables;
+};
+
 InfluxDBClient.prototype._buildURL = function(configParams) {
   let url = configParams.INFLUXDB_URL;
   if (!url.endsWith("/")) {
@@ -176,6 +217,50 @@ InfluxDBClient.prototype._buildURL = function(configParams) {
   url += encodeURIComponent(configParams.INFLUXDB_ORG);
   return url;
 };
+
+class InfluxDBTable {
+  group;
+  data_types;
+  defaults;
+  names;
+  data = [];
+  fields = [];
+
+  parseSchema() {
+    let data_types = this.data_types.split(",").slice(3);
+    let names = this.names.split(",").slice(3);
+    data_types.forEach((type, index) => {
+      const field = {};
+      field.name = names[index].trim();
+      field.label = names[index].trim();
+      field.semantics = {};
+      field.semantics.conceptType = "METRIC";
+      field.semantics.isReaggregatable = false;
+
+      switch (type.trim()) {
+        case "double":
+        case "long":
+        case "unsignedLong":
+          field.dataType = "NUMBER";
+          field.semantics.semanticGroup = "NUMBER";
+          field.semantics.isReaggregatable = true;
+          break;
+        case "boolean":
+          field.dataType = "BOOLEAN";
+          break;
+        case "dateTime:RFC3339":
+          field.dataType = "STRING";
+          field.semantics.semanticType = "YEAR_MONTH_DAY_SECOND";
+          field.semantics.semanticGroup = "DATETIME";
+          break;
+        default:
+          field.dataType = "STRING";
+          break;
+      }
+      this.fields.push(field);
+    });
+  }
+}
 
 // istanbul ignore next
 // Needed for testing

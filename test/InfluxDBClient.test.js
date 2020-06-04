@@ -14,6 +14,9 @@ beforeEach(() => {
 
   Utilities = jest.fn();
   Utilities.parseCsv = jest.fn();
+
+  Logger = jest.fn();
+  Logger.log = jest.fn();
 });
 
 describe("get buckets", () => {
@@ -103,11 +106,11 @@ describe("get fields", () => {
     Utilities.parseCsv.mockReturnValue(csv);
 
     // Mocks for fields
-    const response = `#group,false,false,false,false,false,false,false
-#datatype,string,long,boolean,double,long,string,unsignedLong
-#default,_result,,,,,,
-,result,table,fieldBool,fieldFloat,fieldInteger,fieldString,fieldUInteger
-,,0,true,-1234456000000000000000000000000000000000000000000000000000000000000000000000000,12485903,this is a string,6
+    const response = `#group,false,false,false,false,false,false,false,false
+#datatype,string,long,boolean,double,long,string,unsignedLong,dateTime:RFC3339
+#default,_result,,,,,,,
+,result,table,fieldBool,fieldFloat,fieldInteger,fieldString,fieldUInteger,fieldDate
+,,0,true,-1234456000000000000000000000000000000000000000000000000000000000000000000000000,12485903,this is a string,6,2020-06-02T12:45:56.16866267Z
 
 `;
     let httpResponse = jest.fn();
@@ -148,22 +151,16 @@ v1.tagKeys(
       "http://localhost:9999/api/v2/query?org=my-org"
     );
     expect(UrlFetchApp.fetch.mock.calls[1][1]).toStrictEqual({
-      contentType: "application/vnd.flux",
+      contentType: "application/json",
       headers: {
         Accept: "application/csv",
         Authorization: "Token my-token"
       },
       method: "post",
-      payload: `from(bucket: "my-bucket")
-  |> range(start: time(v: 1))
-  |> filter(fn: (r) => r["_measurement"] == "circleci")
-  |> drop(columns: ["host", "reponame", "vcs_url"])
-  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-  |> drop(columns: ["_start", "_stop", "_time", "_measurement"])
-  |> limit(n:1)`
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1)) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> drop(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\"]) |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> drop(columns: [\\"_start\\", \\"_stop\\", \\"_time\\", \\"_measurement\\"]) |> limit(n:1)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
     });
 
-    expect(buckets).toHaveLength(8);
+    expect(buckets).toHaveLength(9);
     expect(buckets[0]).toEqual({
       dataType: "STRING",
       label: "host",
@@ -188,11 +185,65 @@ v1.tagKeys(
         conceptType: "DIMENSION"
       }
     });
-    expect(buckets[3]).toEqual({});
-    expect(buckets[4]).toEqual({});
-    expect(buckets[5]).toEqual({});
-    expect(buckets[6]).toEqual({});
-    expect(buckets[7]).toEqual({});
+    expect(buckets[3]).toEqual({
+      dataType: "BOOLEAN",
+      label: "fieldBool",
+      name: "fieldBool",
+      semantics: {
+        conceptType: "METRIC",
+        isReaggregatable: false
+      }
+    });
+    expect(buckets[4]).toEqual({
+      dataType: "NUMBER",
+      label: "fieldFloat",
+      name: "fieldFloat",
+      semantics: {
+        conceptType: "METRIC",
+        isReaggregatable: true,
+        semanticGroup: "NUMBER"
+      }
+    });
+    expect(buckets[5]).toEqual({
+      dataType: "NUMBER",
+      label: "fieldInteger",
+      name: "fieldInteger",
+      semantics: {
+        conceptType: "METRIC",
+        isReaggregatable: true,
+        semanticGroup: "NUMBER"
+      }
+    });
+    expect(buckets[6]).toEqual({
+      dataType: "STRING",
+      label: "fieldString",
+      name: "fieldString",
+      semantics: {
+        conceptType: "METRIC",
+        isReaggregatable: false
+      }
+    });
+    expect(buckets[7]).toEqual({
+      dataType: "NUMBER",
+      label: "fieldUInteger",
+      name: "fieldUInteger",
+      semantics: {
+        conceptType: "METRIC",
+        isReaggregatable: true,
+        semanticGroup: "NUMBER"
+      }
+    });
+    expect(buckets[8]).toEqual({
+      dataType: "STRING",
+      label: "fieldDate",
+      name: "fieldDate",
+      semantics: {
+        conceptType: "METRIC",
+        isReaggregatable: false,
+        semanticGroup: "DATETIME",
+        semanticType: "YEAR_MONTH_DAY_SECOND"
+      }
+    });
   });
 });
 
