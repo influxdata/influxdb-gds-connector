@@ -1,0 +1,34 @@
+#group,false,false,false,true,true,true,true,true,false,false,false,false,false,false,false,false
+#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,string,double,double,boolean,string,double,double,double,string
+#default,_result,,,,,,,,,,,,,,,
+,result,table,_time,_start,_stop,_measurement,reponame,vcs_url,build_num,build_time_millis,failed,lifecycle,parallel,previous_build_num,previous_build_time_millis,status
+,,0,2020-05-30T00:05:05Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-csharp,https://github.com/influxdata/influxdb-client-csharp,789,179493,false,finished,1,788,185724,success
+,,0,2020-05-31T00:05:17Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-csharp,https://github.com/influxdata/influxdb-client-csharp,790,192074,false,finished,1,789,179493,success
+,,0,2020-06-01T00:05:17Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-csharp,https://github.com/influxdata/influxdb-client-csharp,791,190784,false,finished,1,789,179493,success
+,,1,2020-05-30T00:13:08Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-java,https://github.com/influxdata/influxdb-client-java,1344,479751,false,finished,1,1343,512297,success
+,,1,2020-05-30T00:13:41Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-java,https://github.com/influxdata/influxdb-client-java,1343,512297,false,finished,1,1342,501201,success
+,,1,2020-05-31T00:12:54Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-java,https://github.com/influxdata/influxdb-client-java,1345,461743,false,finished,1,1344,479751,success
+,,1,2020-05-31T00:13:23Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-java,https://github.com/influxdata/influxdb-client-java,1346,483059,false,finished,1,1344,479751,success
+,,1,2020-06-01T00:15:17Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-java,https://github.com/influxdata/influxdb-client-java,1348,607334,false,finished,1,1344,479751,success
+,,1,2020-06-01T00:16:27Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-java,https://github.com/influxdata/influxdb-client-java,1347,674736,false,finished,1,1344,479751,success
+
+#group,false,false,false,true,true,true,true,true,false,false,false,false,false,false,false,false,false,false,false
+#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,string,string,string,double,double,boolean,string,double,double,double,string,double
+#default,_result,,,,,,,,,,,,,,,,,,
+,result,table,_time,_start,_stop,_measurement,reponame,vcs_url,author_email,author_name,build_num,build_time_millis,failed,lifecycle,parallel,previous_build_num,previous_build_time_millis,status,user_id
+,,2,2020-05-29T12:39:58Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-js,https://github.com/influxdata/influxdb-client-js,tom.hol@example.com,Tom Hol,278,39448,false,finished,1,277,45805,success,16321466
+,,2,2020-05-29T12:40:04Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-js,https://github.com/influxdata/influxdb-client-js,tom.hol@example.com,Tom Hol,277,45805,true,finished,1,276,39434,failed,16321466
+,,2,2020-05-30T05:45:15Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-js,https://github.com/influxdata/influxdb-client-js,tom.hol@example.com,Tom Hol,280,56233,false,finished,1,279,68051,success,16321466
+,,2,2020-05-30T05:45:22Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-js,https://github.com/influxdata/influxdb-client-js,tom.hol@example.com,Tom Hol,279,68051,false,finished,1,278,39448,success,16321466
+
+#group,false,false,false,true,true,true,true,true,false,false,false,false,false,false,false,false
+#datatype,string,long,dateTime:RFC3339,dateTime:RFC3339,dateTime:RFC3339,string,string,string,double,double,boolean,string,double,double,double,string
+#default,_result,,,,,,,,,,,,,,,
+,result,table,_time,_start,_stop,_measurement,reponame,vcs_url,build_num,build_time_millis,failed,lifecycle,parallel,previous_build_num,previous_build_time_millis,status
+,,3,2020-05-30T00:02:51Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-php,https://github.com/influxdata/influxdb-client-php,547,105698,false,finished,1,546,115977,success
+,,3,2020-05-31T00:04:14Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-php,https://github.com/influxdata/influxdb-client-php,548,178583,false,finished,1,547,105698,success
+,,3,2020-06-01T00:02:19Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-php,https://github.com/influxdata/influxdb-client-php,549,66060,false,finished,1,547,105698,success
+,,4,2020-05-30T00:04:58Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-python,https://github.com/influxdata/influxdb-client-python,750,165210,false,finished,1,749,136741,success
+,,4,2020-05-31T00:04:15Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-python,https://github.com/influxdata/influxdb-client-python,751,123904,false,finished,1,750,165210,success
+,,4,2020-06-01T00:04:16Z,2020-05-29T08:29:24.151426259Z,2020-06-05T08:29:24.151426259Z,circleci,influxdb-client-python,https://github.com/influxdata/influxdb-client-python,752,126864,false,finished,1,750,165210,success
+

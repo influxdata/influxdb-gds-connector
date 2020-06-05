@@ -202,6 +202,7 @@ function getData(request) {
   return {
     schema: fieldsFiltered,
     rows: [],
+    filtersApplied: false,
   }
 }
 

@@ -266,6 +266,92 @@ v1.tagKeys(
   })
 })
 
+describe('get data', () => {
+  let configParams
+
+  beforeEach(() => {
+    const fs = require('fs')
+    const csv = fs.readFileSync(__dirname + '/data.csv', 'utf8')
+    let httpResponse = jest.fn()
+    httpResponse.getContentText = jest.fn()
+    httpResponse.getContentText.mockReturnValue(csv)
+
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+
+    configParams = {}
+    configParams.INFLUXDB_URL = 'http://localhost:9999'
+    configParams.INFLUXDB_TOKEN = 'my-token'
+    configParams.INFLUXDB_ORG = 'my-org'
+    configParams.INFLUXDB_BUCKET = 'my-bucket'
+    configParams.INFLUXDB_MEASUREMENT = 'circleci'
+  })
+
+  test('success', () => {
+    let data = client.getData(
+      configParams,
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      {sampleExtraction: false}
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload:
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+    })
+  })
+
+  test('sampleExtraction', () => {
+    let data = client.getData(
+      configParams,
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      {sampleExtraction: true}
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload:
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+    })
+  })
+
+  test('without data range', () => {
+    let data = client.getData(configParams, {}, {sampleExtraction: false})
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload:
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1), stop: now()) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+    })
+  })
+})
+
 describe('build URL', () => {
   test('value', () => {
     let configParams = {}

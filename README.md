@@ -30,7 +30,7 @@ Try it in Google Data Studio:
 - https://github.com/the-unbelievable-machine/mite-js-google-datastudio-connector
 
 ##### TODO:
-1. implement validateKey
+1. implement filtering
 1. v1 support
 1. custom FLUX
 

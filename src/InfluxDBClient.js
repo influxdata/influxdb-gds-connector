@@ -35,6 +35,26 @@ const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
   )
 }
 
+const QUERY_DATA = (
+  bucket_name,
+  measurement_name,
+  range_start,
+  range_stop,
+  sampleExtraction
+) => {
+  range_start = range_start || 'time(v: 1)'
+  range_stop = range_stop || 'now()'
+  let limit_size = sampleExtraction ? ' |> limit(n:10)' : ''
+  return (
+    `{"query":"from(bucket: \\"${bucket_name}\\") ` +
+    `|> range(start: ${range_start}, stop: ${range_stop}) ` +
+    `|> filter(fn: (r) => r[\\"_measurement\\"] == \\"${measurement_name}\\") ` +
+    `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")${limit_size}", ` +
+    `"type":"flux", ` +
+    `"dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
+  )
+}
+
 /**
  * Validate configuration of Connector.
  *
@@ -143,6 +163,34 @@ InfluxDBClient.prototype.getFields = function (configParams) {
   fields.push(timestamp)
 
   return fields
+}
+
+/**
+ * Returns the tabular data for the given request.
+ * @param configParams An object containing the user provided values for the config parameters defined by the connector.
+ * @param dateRange By default, the date range provided will be the last 28 days excluding today. If a user applies a date range filter for a report, then the date range provided will reflect the user selection.
+ * @param scriptParams An object containing information relevant to connector execution
+ * @returns {*[]} The values for the requested field(s).
+ */
+InfluxDBClient.prototype.getData = function (
+  configParams,
+  dateRange,
+  scriptParams
+) {
+  let queryData = QUERY_DATA(
+    configParams.INFLUXDB_BUCKET,
+    configParams.INFLUXDB_MEASUREMENT,
+    dateRange.startDate,
+    dateRange.endDate,
+    scriptParams.sampleExtraction || false
+  )
+
+  let tables = this._query(configParams, queryData, {
+    mapping: this._extractData,
+    contentType: 'application/json',
+  })
+
+  return []
 }
 
 InfluxDBClient.prototype._query = function (
