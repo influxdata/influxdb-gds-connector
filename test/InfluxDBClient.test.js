@@ -268,6 +268,22 @@ v1.tagKeys(
 
 describe('get data', () => {
   let configParams
+  let fields = [
+    {name: 'host'},
+    {name: 'reponame'},
+    {name: 'vcs_url'},
+    {name: 'author_email'},
+    {name: 'author_name'},
+    {name: 'build_num'},
+    {name: 'build_time_millis'},
+    {name: 'failed'},
+    {name: 'lifecycle'},
+    {name: 'parallel'},
+    {name: 'previous_build_num'},
+    {name: 'previous_build_time_millis'},
+    {name: 'status'},
+    {name: 'user_id'},
+  ]
 
   beforeEach(() => {
     const fs = require('fs')
@@ -287,10 +303,11 @@ describe('get data', () => {
   })
 
   test('success', () => {
-    let data = client.getData(
+    let rows = client.getData(
       configParams,
+      {sampleExtraction: false},
       {startDate: '2020-04-20', endDate: '2020-05-20'},
-      {sampleExtraction: false}
+      fields
     )
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
@@ -307,13 +324,50 @@ describe('get data', () => {
       payload:
         '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
+
+    expect(rows).toHaveLength(19)
+    rows.forEach(row => expect(row.values).toHaveLength(14))
+  })
+
+  test('specified fields', () => {
+    let rows = client.getData(
+      configParams,
+      {sampleExtraction: false},
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      [
+        {name: 'reponame'},
+        {name: 'build_num'},
+        {name: 'user_id'},
+        {name: 'failed'},
+        {name: 'build_time_millis'},
+      ]
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload:
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+    })
+
+    expect(rows).toHaveLength(19)
+    rows.forEach(row => expect(row.values).toHaveLength(5))
   })
 
   test('sampleExtraction', () => {
-    let data = client.getData(
+    client.getData(
       configParams,
+      {sampleExtraction: true},
       {startDate: '2020-04-20', endDate: '2020-05-20'},
-      {sampleExtraction: true}
+      fields
     )
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
@@ -333,7 +387,7 @@ describe('get data', () => {
   })
 
   test('without data range', () => {
-    let data = client.getData(configParams, {}, {sampleExtraction: false})
+    client.getData(configParams, {sampleExtraction: false}, {}, fields)
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(

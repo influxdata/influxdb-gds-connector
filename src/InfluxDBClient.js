@@ -168,14 +168,16 @@ InfluxDBClient.prototype.getFields = function (configParams) {
 /**
  * Returns the tabular data for the given request.
  * @param configParams An object containing the user provided values for the config parameters defined by the connector.
- * @param dateRange By default, the date range provided will be the last 28 days excluding today. If a user applies a date range filter for a report, then the date range provided will reflect the user selection.
  * @param scriptParams An object containing information relevant to connector execution
+ * @param dateRange By default, the date range provided will be the last 28 days excluding today. If a user applies a date range filter for a report, then the date range provided will reflect the user selection.
+ * @param fields The names of the requested fields.
  * @returns {*[]} The values for the requested field(s).
  */
 InfluxDBClient.prototype.getData = function (
   configParams,
+  scriptParams,
   dateRange,
-  scriptParams
+  fields
 ) {
   let queryData = QUERY_DATA(
     configParams.INFLUXDB_BUCKET,
@@ -185,12 +187,18 @@ InfluxDBClient.prototype.getData = function (
     scriptParams.sampleExtraction || false
   )
 
-  let tables = this._query(configParams, queryData, {
+  let rows = this._query(configParams, queryData, {
     mapping: this._extractData,
     contentType: 'application/json',
   })
+    .map(table => {
+      return table.rows.map(row => {
+        return {values: fields.map(field => undefined)}
+      })
+    })
+    .reduce((a, b) => a.concat(b))
 
-  return []
+  return rows
 }
 
 InfluxDBClient.prototype._query = function (
@@ -249,28 +257,31 @@ InfluxDBClient.prototype._extractData = function (textContent) {
 
   Logger.log('Response from InfluxDB: %s', textContent)
 
-  textContent.split('\n').forEach(line => {
-    if (line.startsWith('#group')) {
-      prepareTable()
-      table.group = line
-    } else if (line.startsWith('#datatype')) {
-      prepareTable()
-      table.data_types = line
-    } else if (line.startsWith('#default')) {
-      prepareTable()
-      table.defaults = line
-    } else if (line.startsWith(',result,table,')) {
-      prepareTable()
-      table.names = line
-    } else {
-      // process row of table first time => parseSchema,
-      if (!processNextTable) {
-        table.parseSchema()
-        processNextTable = true
+  textContent
+    .split('\n')
+    .filter(line => line.trim().length !== 0)
+    .forEach(line => {
+      if (line.startsWith('#group')) {
+        prepareTable()
+        table.group = line
+      } else if (line.startsWith('#datatype')) {
+        prepareTable()
+        table.data_types = line
+      } else if (line.startsWith('#default')) {
+        prepareTable()
+        table.defaults = line
+      } else if (line.startsWith(',result,table,')) {
+        prepareTable()
+        table.names = line
+      } else {
+        // process row of table first time => parseSchema,
+        if (!processNextTable) {
+          table.parseSchema()
+          processNextTable = true
+        }
+        table.rows.push(line)
       }
-      table.data.push(line)
-    }
-  })
+    })
 
   return tables
 }
@@ -290,7 +301,7 @@ class InfluxDBTable {
   data_types
   defaults
   names
-  data = []
+  rows = []
   fields = []
 
   parseSchema() {
