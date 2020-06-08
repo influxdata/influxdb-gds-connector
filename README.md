@@ -28,6 +28,7 @@ Try it in Google Data Studio:
 - https://github.com/googledatastudio/community-connectors/blob/master/kaggle/README.md 
 - https://github.com/OlegOdnoral/RA_GoogleDataStudio_Adapter/blob/master/src/main.js
 - https://github.com/the-unbelievable-machine/mite-js-google-datastudio-connector
+- https://script.google.com/home/projects/18YPFhvO1TMR7QFCw2iFuIH_1_iPvFIYrnT3fg8J7skoqUd5x7YAnPD7_/executions?run_as=1
 
 ##### TODO:
 1. implement filtering

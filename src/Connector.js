@@ -1,4 +1,4 @@
-var cc = DataStudioApp.createCommunityConnector()
+const cc = DataStudioApp.createCommunityConnector()
 
 /**
  * Returns the Auth Type of this connector.
@@ -25,10 +25,10 @@ function isAdminUser() {
  *
  * @param request
  * @param cached {boolean}  use cached values
+ * @param client {InfluxDBClient}  InfluxDB cliebt
  * @returns fields for given configuration
  */
-function getFields(request, cached) {
-  const client = new InfluxDBClient()
+function getFields(request, cached, client) {
   validateConfig(request.configParams)
 
   const cache = CacheService.getScriptCache()
@@ -182,27 +182,38 @@ function getConfig(request) {
 }
 
 function getSchema(request) {
-  const fields = getFields(request, false)
+  let client = new InfluxDBClient()
+  const fields = getFields(request, false, client)
   return {schema: fields}
 }
 
 function getData(request) {
+  const client = new InfluxDBClient()
   const names = request.fields.map(field => field.name)
 
-  let fieldsFiltered = getFields(request, true).filter(field =>
+  let fieldsFiltered = getFields(request, true, client).filter(field =>
     names.includes(field.name)
   )
 
   Logger.log('Use fields: %s for requested names: %s', fieldsFiltered, names)
 
-  //
-  // sampleExtraction
-  //
+  try {
+    let rows = client.getData(
+      request.configParams,
+      request.scriptParams,
+      request.dateRange,
+      fieldsFiltered
+    )
 
-  return {
-    schema: fieldsFiltered,
-    rows: [],
-    filtersApplied: false,
+    return {
+      schema: fieldsFiltered,
+      rows: rows,
+      filtersApplied: false,
+    }
+  } catch (e) {
+    throwUserError(
+      `"GetData from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`
+    )
   }
 }
 
@@ -233,4 +244,4 @@ function throwUserError(message) {
 
 // Needed for testing
 var module = module || {}
-module.exports = {getAuthType, isAdminUser}
+module.exports = {getAuthType, isAdminUser, getData}
