@@ -187,16 +187,47 @@ InfluxDBClient.prototype.getData = function (
     scriptParams.sampleExtraction || false
   )
 
-  let rows = this._query(configParams, queryData, {
+  let tables = this._query(configParams, queryData, {
     mapping: this._extractData,
     contentType: 'application/json',
   })
+
+  let rows = tables
     .map(table => {
-      return table.rows.map(row => {
-        return {values: fields.map(field => undefined)}
-      })
+      let csv = Utilities.parseCsv(table.rows.join('\n'), ',')
+      return csv.map(row => ({
+        values: fields.map(field => {
+          let index = table.names.indexOf(field.name)
+          let value = row[index]
+          if (value === undefined) {
+            return undefined
+          }
+          switch (field.dataType) {
+            case 'NUMBER':
+              return parseFloat(value)
+            case 'BOOLEAN':
+              return 'true' === value.toLowerCase()
+            default:
+              if (
+                field.semantics &&
+                field.semantics.semanticGroup === 'YEAR_MONTH_DAY_SECOND'
+              ) {
+                let date = new Date(value)
+                return (
+                  date.getUTCFullYear() +
+                  ('0' + (date.getUTCMonth() + 1)).slice(-2) +
+                  ('0' + date.getUTCDate()).slice(-2) +
+                  ('0' + date.getUTCHours()).slice(-2) +
+                  ('0' + date.getUTCMinutes()).slice(-2) +
+                  ('0' + date.getUTCSeconds()).slice(-2)
+                )
+              }
+              return value
+          }
+        }),
+      }))
     })
-    .reduce((a, b) => a.concat(b))
+    .reduce((array1, array2) => array1.concat(array2))
 
   return rows
 }
@@ -263,16 +294,16 @@ InfluxDBClient.prototype._extractData = function (textContent) {
     .forEach(line => {
       if (line.startsWith('#group')) {
         prepareTable()
-        table.group = line
+        table.group = line.split(',').map(it => it.trim())
       } else if (line.startsWith('#datatype')) {
         prepareTable()
-        table.data_types = line
+        table.data_types = line.split(',').map(it => it.trim())
       } else if (line.startsWith('#default')) {
         prepareTable()
-        table.defaults = line
+        table.defaults = line.split(',').map(it => it.trim())
       } else if (line.startsWith(',result,table,')) {
         prepareTable()
-        table.names = line
+        table.names = line.split(',').map(it => it.trim())
       } else {
         // process row of table first time => parseSchema,
         if (!processNextTable) {
@@ -305,8 +336,8 @@ class InfluxDBTable {
   fields = []
 
   parseSchema() {
-    let data_types = this.data_types.split(',').slice(3)
-    let names = this.names.split(',').slice(3)
+    let data_types = this.data_types.slice(3)
+    let names = this.names.slice(3)
     data_types.forEach((type, index) => {
       const field = {}
       field.name = names[index].trim()
