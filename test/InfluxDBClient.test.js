@@ -711,6 +711,24 @@ describe('get data', () => {
         '{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1), stop: now()) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
   })
+
+  test('empty result', () => {
+
+    let httpResponse = jest.fn()
+    httpResponse.getContentText = jest.fn()
+    httpResponse.getContentText.mockReturnValue('')
+
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+
+    let rows = client.getData(
+      configParams,
+      {sampleExtraction: false},
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      fields
+    )
+
+    expect(rows).toHaveLength(0)
+  })
 })
 
 describe('build URL', () => {
