@@ -42,8 +42,17 @@ const QUERY_DATA = (
   range_stop,
   sampleExtraction
 ) => {
-  range_start = range_start || 'time(v: 1)'
-  range_stop = range_stop || 'now()'
+  if (range_start) {
+    range_start += 'T00:00:00Z'
+  } else {
+    range_start = 'time(v: 1)'
+  }
+
+  if (range_stop) {
+    range_stop += 'T23:59:59Z'
+  } else {
+    range_stop = 'now()'
+  }
   let limit_size = sampleExtraction ? ' |> limit(n:10)' : ''
   return (
     `{"query":"from(bucket: \\"${bucket_name}\\") ` +

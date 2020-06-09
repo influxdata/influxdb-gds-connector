@@ -326,7 +326,7 @@ describe('get data', () => {
       },
       method: 'post',
       payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
 
     expect(rows).toHaveLength(19)
@@ -439,7 +439,7 @@ describe('get data', () => {
       },
       method: 'post',
       payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
 
     expect(rows).toHaveLength(19)
@@ -606,7 +606,7 @@ describe('get data', () => {
       },
       method: 'post',
       payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
 
     expect(rows).toHaveLength(19)
@@ -657,7 +657,7 @@ describe('get data', () => {
       },
       method: 'post',
       payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
 
     expect(rows).toHaveLength(19)
@@ -689,7 +689,7 @@ describe('get data', () => {
       },
       method: 'post',
       payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20, stop: 2020-05-20) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
     })
   })
 
@@ -713,7 +713,6 @@ describe('get data', () => {
   })
 
   test('empty result', () => {
-
     let httpResponse = jest.fn()
     httpResponse.getContentText = jest.fn()
     httpResponse.getContentText.mockReturnValue('')
