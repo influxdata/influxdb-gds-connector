@@ -1,10 +1,10 @@
-const InfluxDBClient = require('../src/InfluxDBClient')
+const require_import = require('../src/InfluxDBClient')
 
 let client
 let validConfigurations
 
 beforeEach(() => {
-  client = new InfluxDBClient()
+  client = new require_import.InfluxDBClient()
   validConfigurations = {}
   validConfigurations.INFLUXDB_URL = 'http://localhost:9999'
   validConfigurations.INFLUXDB_TOKEN = 'my-token'

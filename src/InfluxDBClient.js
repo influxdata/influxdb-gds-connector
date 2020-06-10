@@ -64,6 +64,9 @@ const QUERY_DATA = (
   )
 }
 
+const TIMESTAMP_SEMANTICS_GROUP = 'DATETIME'
+const TIMESTAMP_SEMANTICS_TYPE = 'YEAR_MONTH_DAY_SECOND'
+
 /**
  * Validate configuration of Connector.
  *
@@ -167,8 +170,8 @@ InfluxDBClient.prototype.getFields = function (configParams) {
   timestamp.semantics = {}
   timestamp.semantics.isReaggregatable = false
   timestamp.semantics.conceptType = 'DIMENSION'
-  timestamp.semantics.semanticType = 'YEAR_MONTH_DAY_SECOND'
-  timestamp.semantics.semanticGroup = 'DATETIME'
+  timestamp.semantics.semanticType = TIMESTAMP_SEMANTICS_TYPE
+  timestamp.semantics.semanticGroup = TIMESTAMP_SEMANTICS_GROUP
   fields.push(timestamp)
 
   return fields
@@ -219,7 +222,7 @@ InfluxDBClient.prototype.getData = function (
             default:
               if (
                 field.semantics &&
-                field.semantics.semanticGroup === 'YEAR_MONTH_DAY_SECOND'
+                field.semantics.semanticGroup === TIMESTAMP_SEMANTICS_GROUP
               ) {
                 let date = new Date(value)
                 return (
@@ -368,8 +371,8 @@ class InfluxDBTable {
           break
         case 'dateTime:RFC3339':
           field.dataType = 'STRING'
-          field.semantics.semanticType = 'YEAR_MONTH_DAY_SECOND'
-          field.semantics.semanticGroup = 'DATETIME'
+          field.semantics.semanticType = TIMESTAMP_SEMANTICS_TYPE
+          field.semantics.semanticGroup = TIMESTAMP_SEMANTICS_GROUP
           break
         default:
           field.dataType = 'STRING'
@@ -383,4 +386,4 @@ class InfluxDBTable {
 // istanbul ignore next
 // Needed for testing
 var module = module || {}
-module.exports = InfluxDBClient
+module.exports = {InfluxDBClient, TIMESTAMP_SEMANTICS_GROUP}

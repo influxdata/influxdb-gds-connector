@@ -1,9 +1,9 @@
-const InfluxDBClient = require('../src/InfluxDBClient')
+const require_import = require('../src/InfluxDBClient')
 
 let client
 
 beforeEach(() => {
-  client = new InfluxDBClient()
+  client = new require_import.InfluxDBClient()
   UrlFetchApp = jest.fn()
   UrlFetchApp.fetch = jest.fn()
 
@@ -630,17 +630,23 @@ describe('get data', () => {
         {
           name: '_time',
           dataType: 'STRING',
-          semantics: {semanticGroup: 'YEAR_MONTH_DAY_SECOND'},
+          semantics: {
+            semanticGroup: require_import.TIMESTAMP_SEMANTICS_GROUP,
+          },
         },
         {
           name: '_start',
           dataType: 'STRING',
-          semantics: {semanticGroup: 'YEAR_MONTH_DAY_SECOND'},
+          semantics: {
+            semanticGroup: require_import.TIMESTAMP_SEMANTICS_GROUP,
+          },
         },
         {
           name: '_stop',
           dataType: 'STRING',
-          semantics: {semanticGroup: 'YEAR_MONTH_DAY_SECOND'},
+          semantics: {
+            semanticGroup: require_import.TIMESTAMP_SEMANTICS_GROUP,
+          },
         },
       ]
     )
