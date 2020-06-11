@@ -40,25 +40,35 @@ const QUERY_DATA = (
   measurement_name,
   range_start,
   range_stop,
-  sampleExtraction
+  sampleExtraction,
+  fields
 ) => {
   if (range_start) {
     range_start += 'T00:00:00Z'
   } else {
     range_start = 'time(v: 1)'
   }
-
   if (range_stop) {
     range_stop += 'T23:59:59Z'
   } else {
     range_stop = 'now()'
   }
-  let limit_size = sampleExtraction ? ' |> limit(n:10)' : ''
+  let limit_size = sampleExtraction ? '|> limit(n:10)' : ''
+  let keeps = fields
+    .map(function (field) {
+      return `\\"${field.name}\\"`
+    })
+    .join(', ')
   return (
     `{"query":"from(bucket: \\"${bucket_name}\\") ` +
     `|> range(start: ${range_start}, stop: ${range_stop}) ` +
     `|> filter(fn: (r) => r[\\"_measurement\\"] == \\"${measurement_name}\\") ` +
-    `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")${limit_size}", ` +
+    `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") ` +
+    `|> keep(columns: [${keeps}, \\"_time\\"]) ` +
+    `${limit_size} ` +
+    // `|> sort(columns: [\\"_time\\"], desc: true) ` +
+    // `|> limit(n:${limit_size})` +
+    `", ` +
     `"type":"flux", ` +
     `"dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
   )
@@ -196,7 +206,8 @@ InfluxDBClient.prototype.getData = function (
     configParams.INFLUXDB_MEASUREMENT,
     dateRange.startDate,
     dateRange.endDate,
-    scriptParams.sampleExtraction || false
+    scriptParams.sampleExtraction || false,
+    fields
   )
 
   let tables = this._query(configParams, queryData, {
