@@ -731,6 +731,81 @@ describe('get data', () => {
 
     expect(rows).toHaveLength(0)
   })
+
+  test('Aggregation - NONE', () => {
+    configParams.INFLUXDB_AGGREGATION = 'NONE'
+
+    client.getData(
+      configParams,
+      {sampleExtraction: false},
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      fields
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+    })
+  })
+
+  test('Aggregation - LAST', () => {
+    configParams.INFLUXDB_AGGREGATION = 'LAST'
+
+    client.getData(
+      configParams,
+      {sampleExtraction: false},
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      fields
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"]) |> sort(columns: [\\"_time\\"], desc: true) |> limit(n:1) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+    })
+  })
+
+  test('Aggregation - LAST with sampleExtraction', () => {
+    configParams.INFLUXDB_AGGREGATION = 'LAST'
+
+    client.getData(
+      configParams,
+      {sampleExtraction: true},
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      fields
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"]) |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+    })
+  })
 })
 
 describe('build URL', () => {

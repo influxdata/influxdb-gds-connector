@@ -38,6 +38,7 @@ const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
 const QUERY_DATA = (
   bucket_name,
   measurement_name,
+  aggregation,
   range_start,
   range_stop,
   sampleExtraction,
@@ -53,7 +54,14 @@ const QUERY_DATA = (
   } else {
     range_stop = 'now()'
   }
-  let limit_size = sampleExtraction ? '|> limit(n:10)' : ''
+  let limit_size
+  if (sampleExtraction) {
+    limit_size = '|> limit(n:10)'
+  } else if (aggregation && aggregation === 'LAST') {
+    limit_size = '|> sort(columns: [\\"_time\\"], desc: true) |> limit(n:1)'
+  } else {
+    limit_size = ''
+  }
   let keeps = fields
     .map(function (field) {
       return `\\"${field.name}\\"`
@@ -66,8 +74,6 @@ const QUERY_DATA = (
     `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") ` +
     `|> keep(columns: [${keeps}, \\"_time\\"]) ` +
     `${limit_size} ` +
-    // `|> sort(columns: [\\"_time\\"], desc: true) ` +
-    // `|> limit(n:${limit_size})` +
     `", ` +
     `"type":"flux", ` +
     `"dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
@@ -204,6 +210,7 @@ InfluxDBClient.prototype.getData = function (
   let queryData = QUERY_DATA(
     configParams.INFLUXDB_BUCKET,
     configParams.INFLUXDB_MEASUREMENT,
+    configParams.INFLUXDB_AGGREGATION,
     dateRange.startDate,
     dateRange.endDate,
     scriptParams.sampleExtraction || false,

@@ -174,6 +174,17 @@ function getConfig(request) {
 
   if (isBucketEmpty || isMeasurementEmpty) {
     config.setIsSteppedConfig(true)
+  } else {
+    config
+      .newSelectSingle()
+      .setId('INFLUXDB_AGGREGATION')
+      .setName('Aggregation')
+      .setHelpText(
+        'Select the type of query results aggregation. The "Last" option select only last row from each Time Series.'
+      )
+      .setAllowOverride(false)
+      .addOption(config.newOptionBuilder().setLabel('None').setValue('NONE'))
+      .addOption(config.newOptionBuilder().setLabel('Last').setValue('LAST'))
   }
 
   config.setDateRangeRequired(true)
