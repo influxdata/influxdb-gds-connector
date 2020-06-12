@@ -1,3 +1,5 @@
+# COVID-19 report power by InfluxDB and OWID dataset
+
 ## Data set
 
 ### How to import
@@ -11,3 +13,7 @@ docker run \
     quay.io/influxdb/influx:nightly \
     /usr/src/app/dataset.sh
 ```
+
+## Report
+
+[https://datastudio.google.com/u/0/reporting/257a8b65-162c-4444-96a9-10b6c218074a/page/ZY4TB](https://datastudio.google.com/u/0/reporting/257a8b65-162c-4444-96a9-10b6c218074a/page/ZY4TB)
