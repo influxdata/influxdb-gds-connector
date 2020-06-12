@@ -1,4 +1,4 @@
-# COVID-19 report power by InfluxDB and OWID dataset
+# COVID-19 report powered by InfluxDB and OWID dataset
 
 ## Data set
 
