@@ -14,6 +14,7 @@ mkdir -p "${SCRIPT_PATH}"/tmp
 csv_files=(
 "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/ecdc/full_data.csv|dateTime:2006-01-02,tag,long,long,long,long"
 "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/ecdc/locations.csv|tag,tag,tag,dateTime:2006,long"
+"https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv|tag,tag,dateTime:2006-01-02,string,string,string,long,long,double,double,long,double"
 )
 
 apt-get --yes install wget || true
@@ -23,7 +24,7 @@ do
   url="${i%|*}"
   filename="${url##*/}"
   datatype="#datatype ${i#*|}"
-  measurement="#constant measurement, covid_${filename%.*}"
+  measurement="#constant measurement,covid_${filename%.*}"
   file_path="$SCRIPT_PATH"/tmp/"${filename}"
 
 	#
