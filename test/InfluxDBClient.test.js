@@ -80,10 +80,19 @@ describe('get measurements', () => {
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/vnd.flux',
-      headers: {Accept: 'application/csv', Authorization: 'Token my-token'},
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
       method: 'post',
-      payload:
-        'import "influxdata/influxdb/v1" v1.measurements(bucket: "my-bucket")',
+      payload: `import "influxdata/influxdb/v1"
+
+v1.tagValues(
+  bucket: "my-bucket",
+  tag: "_measurement",
+  predicate: (r) => true,
+  start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
+)`,
     })
 
     expect(buckets).toHaveLength(2)

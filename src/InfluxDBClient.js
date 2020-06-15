@@ -4,7 +4,14 @@ const QUERY_BUCKETS = () =>
   'buckets() |> rename(columns: {"name": "_value"}) |> keep(columns: ["_value"]) |> sort(columns: ["_value"], desc: false)'
 
 const QUERY_MEASUREMENTS = bucket_name =>
-  `import "influxdata/influxdb/v1" v1.measurements(bucket: "${bucket_name}")`
+  `import "influxdata/influxdb/v1"
+
+v1.tagValues(
+  bucket: "${bucket_name}",
+  tag: "_measurement",
+  predicate: (r) => true,
+  start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
+)`
 
 const QUERY_TAGS = (bucket_name, measurement_name) =>
   `import "influxdata/influxdb/v1"
