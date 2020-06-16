@@ -101,6 +101,13 @@ v1.tagValues(
 })
 
 describe('get fields', () => {
+  let configParams = {}
+  configParams.INFLUXDB_URL = 'http://localhost:9999'
+  configParams.INFLUXDB_TOKEN = 'my-token'
+  configParams.INFLUXDB_ORG = 'my-org'
+  configParams.INFLUXDB_BUCKET = 'my-bucket'
+  configParams.INFLUXDB_MEASUREMENT = 'circleci'
+
   test('success', () => {
     // noinspection JSConsecutiveCommasInArrayLiteral
     const csv = [
@@ -128,14 +135,7 @@ describe('get fields', () => {
 
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
-    let configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999'
-    configParams.INFLUXDB_TOKEN = 'my-token'
-    configParams.INFLUXDB_ORG = 'my-org'
-    configParams.INFLUXDB_BUCKET = 'my-bucket'
-    configParams.INFLUXDB_MEASUREMENT = 'circleci'
-
-    let buckets = client.getFields(configParams)
+    let fields = client.getFields(configParams)
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(2)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
       'http://localhost:9999/api/v2/query?org=my-org'
@@ -169,8 +169,8 @@ v1.tagKeys(
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1)) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> drop(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\"]) |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> drop(columns: [\\"_start\\", \\"_stop\\", \\"_time\\", \\"_measurement\\"]) |> limit(n:1)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
-    expect(buckets).toHaveLength(11)
-    expect(buckets[0]).toEqual({
+    expect(fields).toHaveLength(11)
+    expect(fields[0]).toEqual({
       dataType: 'STRING',
       label: 'measurement',
       name: '_measurement',
@@ -178,7 +178,7 @@ v1.tagKeys(
         conceptType: 'DIMENSION',
       },
     })
-    expect(buckets[1]).toEqual({
+    expect(fields[1]).toEqual({
       dataType: 'STRING',
       label: 'host',
       name: 'host',
@@ -186,7 +186,7 @@ v1.tagKeys(
         conceptType: 'DIMENSION',
       },
     })
-    expect(buckets[2]).toEqual({
+    expect(fields[2]).toEqual({
       dataType: 'STRING',
       label: 'reponame',
       name: 'reponame',
@@ -194,7 +194,7 @@ v1.tagKeys(
         conceptType: 'DIMENSION',
       },
     })
-    expect(buckets[3]).toEqual({
+    expect(fields[3]).toEqual({
       dataType: 'STRING',
       label: 'vcs_url',
       name: 'vcs_url',
@@ -202,7 +202,7 @@ v1.tagKeys(
         conceptType: 'DIMENSION',
       },
     })
-    expect(buckets[4]).toEqual({
+    expect(fields[4]).toEqual({
       dataType: 'BOOLEAN',
       label: 'fieldBool',
       name: 'fieldBool',
@@ -211,7 +211,7 @@ v1.tagKeys(
         isReaggregatable: false,
       },
     })
-    expect(buckets[5]).toEqual({
+    expect(fields[5]).toEqual({
       dataType: 'NUMBER',
       label: 'fieldFloat',
       name: 'fieldFloat',
@@ -221,7 +221,7 @@ v1.tagKeys(
         semanticGroup: 'NUMBER',
       },
     })
-    expect(buckets[6]).toEqual({
+    expect(fields[6]).toEqual({
       dataType: 'NUMBER',
       label: 'fieldInteger',
       name: 'fieldInteger',
@@ -231,7 +231,7 @@ v1.tagKeys(
         semanticGroup: 'NUMBER',
       },
     })
-    expect(buckets[7]).toEqual({
+    expect(fields[7]).toEqual({
       dataType: 'STRING',
       label: 'fieldString',
       name: 'fieldString',
@@ -240,7 +240,7 @@ v1.tagKeys(
         isReaggregatable: false,
       },
     })
-    expect(buckets[8]).toEqual({
+    expect(fields[8]).toEqual({
       dataType: 'NUMBER',
       label: 'fieldUInteger',
       name: 'fieldUInteger',
@@ -250,7 +250,7 @@ v1.tagKeys(
         semanticGroup: 'NUMBER',
       },
     })
-    expect(buckets[9]).toEqual({
+    expect(fields[9]).toEqual({
       dataType: 'STRING',
       label: 'fieldDate',
       name: 'fieldDate',
@@ -261,7 +261,7 @@ v1.tagKeys(
         semanticType: 'YEAR_MONTH_DAY_SECOND',
       },
     })
-    expect(buckets[10]).toEqual({
+    expect(fields[10]).toEqual({
       dataType: 'STRING',
       label: 'time',
       name: '_time',
@@ -272,6 +272,53 @@ v1.tagKeys(
         semanticType: 'YEAR_MONTH_DAY_SECOND',
       },
     })
+  })
+
+  test('replace spaces in name', () => {
+    // noinspection JSConsecutiveCommasInArrayLiteral
+    const csv = [
+      [, 'result', 'table', '_value'],
+      [, '_result', 0, 'Entity'],
+      [, '_result', 0, 'ISO code'],
+      [, , ,],
+    ]
+
+    // Mocks for tags
+    Utilities.parseCsv.mockReturnValue(csv)
+
+    // Mocks for fields
+    const response = `#group,false,false,false,false,false,false,false,false,false,false,false
+#datatype,string,long,long,double,long,double,long,double,string,string,string
+#default,_result,,,,,,,,,,
+,result,table,7-day smoothed daily change,7-day smoothed daily change per thousand,Cumulative total,Cumulative total per thousand,Daily change in cumulative total,Daily change in cumulative total per thousand,Notes,Source URL,Source label
+,,0,52349,0.158,14022,1.156,9314,0.064,"Turkish Minister for Health said 7286 tests were conducted on 25th March, so we can subtract that from 26th March figure. This is consistent with Wikipedia",https://covid-19-schweiz.bagapps.ch/de-3.html,COVID Tracking Project
+
+`
+    let httpResponse = jest.fn()
+    httpResponse.getContentText = jest.fn()
+    httpResponse.getContentText.mockReturnValue(response)
+
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+
+    let names = client.getFields(configParams).map(function (field) {
+      return field.name
+    })
+    expect(names).toHaveLength(13)
+    expect(names).toEqual([
+      '_measurement',
+      'Entity',
+      'ISO__space__code',
+      '7__minus__day__space__smoothed__space__daily__space__change',
+      '7__minus__day__space__smoothed__space__daily__space__change__space__per__space__thousand',
+      'Cumulative__space__total',
+      'Cumulative__space__total__space__per__space__thousand',
+      'Daily__space__change__space__in__space__cumulative__space__total',
+      'Daily__space__change__space__in__space__cumulative__space__total__space__per__space__thousand',
+      'Notes',
+      'Source__space__URL',
+      'Source__space__label',
+      '_time',
+    ])
   })
 })
 
@@ -814,6 +861,56 @@ describe('get data', () => {
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"]) |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
+  })
+
+  test('spaces in fields names', () => {
+    const response = `#group,false,false,false,false,false,false,false,false,false,false,false
+#datatype,string,long,long,double,long,double,long,double,string,string,string
+#default,_result,,,,,,,,,,
+,result,table,7-day smoothed daily change,7-day smoothed daily change per thousand,Cumulative total,Cumulative total per thousand,Daily change in cumulative total,Daily change in cumulative total per thousand,Notes,Source URL,Source label
+,,0,52349,0.158,14022,1.156,9314,0.064,"Turkish Minister for Health said 7286 tests were conducted on 25th March, so we can subtract that from 26th March figure. This is consistent with Wikipedia",https://covid-19-schweiz.bagapps.ch/de-3.html,COVID Tracking Project
+
+`
+    let httpResponse = jest.fn()
+    httpResponse.getContentText = jest.fn()
+    httpResponse.getContentText.mockReturnValue(response)
+
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+
+    let rows = client.getData(
+      configParams,
+      {sampleExtraction: false},
+      {startDate: '2020-04-20', endDate: '2020-05-20'},
+      [
+        {
+          name: '7__minus__day__space__smoothed__space__daily__space__change',
+          dataType: 'NUMBER',
+        },
+        {
+          name: 'Cumulative__space__total__space__per__space__thousand',
+          dataType: 'NUMBER',
+        },
+      ]
+    )
+
+    expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
+    expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
+      'http://localhost:9999/api/v2/query?org=my-org'
+    )
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+      },
+      method: 'post',
+      payload:
+        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"7-day smoothed daily change\\", \\"Cumulative total per thousand\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+    })
+
+    expect(rows).toHaveLength(1)
+    rows.forEach(row => expect(row.values).toHaveLength(2))
+    expect(rows[0].values).toEqual([52349, 1.156])
   })
 })
 

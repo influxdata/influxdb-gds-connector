@@ -71,7 +71,7 @@ const QUERY_DATA = (
   }
   let keeps = fields
     .map(function (field) {
-      return `\\"${field.name}\\"`
+      return `\\"${_toOriginalFieldName(field.name)}\\"`
     })
     .join(', ')
   return (
@@ -163,7 +163,7 @@ InfluxDBClient.prototype.getFields = function (configParams) {
 
   tags.forEach(tag => {
     const field = {}
-    field.name = tag
+    field.name = _sanitizeFieldName(tag)
     field.label = tag
     field.dataType = 'STRING'
     field.semantics = {}
@@ -224,6 +224,8 @@ InfluxDBClient.prototype.getData = function (
     fields
   )
 
+  Logger.log('Request to InfluxDB: %s', queryData)
+
   let tables = this._query(configParams, queryData, {
     mapping: this._extractData,
     contentType: 'application/json',
@@ -234,7 +236,7 @@ InfluxDBClient.prototype.getData = function (
       let csv = Utilities.parseCsv(table.rows.join('\n'), ',')
       return csv.map(row => ({
         values: fields.map(field => {
-          let index = table.names.indexOf(field.name)
+          let index = table.names.indexOf(_toOriginalFieldName(field.name))
           let value = row[index]
           if (value === undefined) {
             return undefined
@@ -364,6 +366,14 @@ InfluxDBClient.prototype._buildURL = function (configParams) {
   return url
 }
 
+function _sanitizeFieldName(name) {
+  return name.replace(/\s/g, '__space__').replace(/-/g, '__minus__')
+}
+
+function _toOriginalFieldName(name) {
+  return name.replace(/__space__/g, ' ').replace(/__minus__/g, '-')
+}
+
 class InfluxDBTable {
   group
   data_types
@@ -377,7 +387,7 @@ class InfluxDBTable {
     let names = this.names.slice(3)
     data_types.forEach((type, index) => {
       const field = {}
-      field.name = names[index].trim()
+      field.name = _sanitizeFieldName(names[index].trim())
       field.label = names[index].trim()
       field.semantics = {}
       field.semantics.conceptType = 'METRIC'
