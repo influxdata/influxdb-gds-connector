@@ -79,7 +79,6 @@ const QUERY_DATA = (
     `|> range(start: ${range_start}, stop: ${range_stop}) ` +
     `|> filter(fn: (r) => r[\\"_measurement\\"] == \\"${measurement_name}\\") ` +
     `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") ` +
-    `|> keep(columns: [${keeps}, \\"_time\\"]) ` +
     `${limit_size} ` +
     `", ` +
     `"type":"flux", ` +

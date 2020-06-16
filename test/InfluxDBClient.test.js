@@ -381,8 +381,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
     expect(rows).toHaveLength(19)
@@ -494,8 +493,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"reponame\\", \\"build_num\\", \\"user_id\\", \\"failed\\", \\"build_time_millis\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
     expect(rows).toHaveLength(19)
@@ -661,8 +659,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"reponame\\", \\"build_num\\", \\"user_id\\", \\"failed\\", \\"build_time_millis\\", \\"not_exists_name\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
     expect(rows).toHaveLength(19)
@@ -718,7 +715,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"_time\\", \\"_start\\", \\"_stop\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
     expect(rows).toHaveLength(19)
@@ -749,7 +746,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"]) |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
 
@@ -767,7 +764,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1), stop: now()) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1), stop: now()) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
 
@@ -809,7 +806,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
 
@@ -834,7 +831,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"]) |> sort(columns: [\\"_time\\"], desc: true) |> limit(n:1) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> sort(columns: [\\"_time\\"], desc: true) |> limit(n:1) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
 
@@ -859,7 +856,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\", \\"author_email\\", \\"author_name\\", \\"build_num\\", \\"build_time_millis\\", \\"failed\\", \\"lifecycle\\", \\"parallel\\", \\"previous_build_num\\", \\"previous_build_time_millis\\", \\"status\\", \\"user_id\\", \\"_time\\"]) |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
 
@@ -904,8 +901,7 @@ describe('get data', () => {
         Authorization: 'Token my-token',
       },
       method: 'post',
-      payload:
-        '{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> keep(columns: [\\"7-day smoothed daily change\\", \\"Cumulative total per thousand\\", \\"_time\\"])  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}',
+      payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
     expect(rows).toHaveLength(1)
