@@ -45,7 +45,11 @@ describe('get buckets', () => {
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/vnd.flux',
-      headers: {Accept: 'application/csv', Authorization: 'Token my-token'},
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
+      },
       method: 'post',
       payload: `buckets() |> rename(columns: {"name": "_value"}) |> keep(columns: ["_value"]) |> sort(columns: ["_value"], desc: false)`,
     })
@@ -83,6 +87,7 @@ describe('get measurements', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `import "influxdata/influxdb/v1"
@@ -145,6 +150,7 @@ describe('get fields', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `import "influxdata/influxdb/v1"
@@ -164,6 +170,7 @@ v1.tagKeys(
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1)) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> drop(columns: [\\"host\\", \\"reponame\\", \\"vcs_url\\"]) |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> drop(columns: [\\"_start\\", \\"_stop\\", \\"_time\\", \\"_measurement\\"]) |> limit(n:1)", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -379,6 +386,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -491,6 +499,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -657,6 +666,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -713,6 +723,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -744,6 +755,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -762,6 +774,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1), stop: now()) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -804,6 +817,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -829,6 +843,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> sort(columns: [\\"_time\\"], desc: true) |> limit(n:1) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -854,6 +869,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
@@ -899,6 +915,7 @@ describe('get data', () => {
       headers: {
         Accept: 'application/csv',
         Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,

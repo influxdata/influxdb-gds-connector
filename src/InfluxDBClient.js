@@ -285,6 +285,7 @@ InfluxDBClient.prototype._query = function (
     headers: {
       Authorization: 'Token ' + configParams.INFLUXDB_TOKEN,
       Accept: 'application/csv',
+      'User-Agent': 'influxdb-gds-connector',
     },
   }
   let url = this._buildURL(configParams)
