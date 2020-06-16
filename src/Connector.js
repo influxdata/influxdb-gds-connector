@@ -223,7 +223,7 @@ function getData(request) {
     }
   } catch (e) {
     throwUserError(
-      `"GetData from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`
+      `"GetData from: ${request.configParams.INFLUXDB_URL}" for fields: ${fieldsFiltered} returned an error:${e}`
     )
   }
 }
