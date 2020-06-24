@@ -55,7 +55,7 @@ Chad,Chad,Africa,2020,16425859
 ...
 ```
 
-### 2. World population
+### 3. Recovered cases
 
 - source: [Bing COVID-19 data - recovered cases from all regions](https://github.com/microsoft/Bing-COVID-19-Data/blob/master/data/Bing-COVID19-Data.csv)
 
@@ -77,7 +77,7 @@ ID,Updated,Confirmed,ConfirmedChange,Deaths,DeathsChange,Recovered,RecoveredChan
 
 #### How to import
 
-If we assumed that the files are store in `/usr/src/data`, that can be imported by:
+If we assumed that the files are store in `/usr/src/data`, than can be imported by:
 
 ```bash
 influx write --header=#datatype dateTime:2006-01-02,tag,long,long,long,long --header=#constant measurement,covid_full_data \ 
@@ -90,7 +90,7 @@ influx write --header=#datatype ignored,dateTime:01/02/2006,ignored,ignored,igno
     --header=#constant measurement,covid_Bing-COVID19-Data --file /usr/src/data/Bing-COVID19-Data.csv --skipRowOnError
 ```
 
-## Report
+## Links
 
-[https://datastudio.google.com/u/0/reporting/257a8b65-162c-4444-96a9-10b6c218074a/page/ZY4TB](https://datastudio.google.com/u/0/reporting/257a8b65-162c-4444-96a9-10b6c218074a/page/ZY4TB)
+- Create your Report: [https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
 
