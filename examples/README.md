@@ -113,6 +113,10 @@ Every "widget" on the Google Data Studio Page uses connector to fetch data and w
 
 > 3 measurement x 8 widget = 24 connection to InfluxDB + Data Blending overhead for each refresh    
 
+For joining data together we use InfluxDB Task:
+
+[<img src="flux.png" height="350px">](task.flux)
+
 ## Links
 
 - Create your Report: [https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
