@@ -4,7 +4,7 @@ This example shows how to create a report in [Google Data Studio](https://datast
 
 The following image shows how will finished report looks like:
 
-[<img src="examples/COVID-19_report_powered_by_InfluxDB.png" height="250px">](https://datastudio.google.com/s/p19vh-b82Sw) 
+[<img src="COVID-19_report_powered_by_InfluxDB.png" height="250px">](https://datastudio.google.com/s/p19vh-b82Sw) 
 
 ## Data set
 
