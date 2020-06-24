@@ -103,6 +103,16 @@ influx write --header=#datatype ignored,dateTime:01/02/2006,ignored,ignored,igno
 
 <img src="GDS-schema.png" height="350px">
 
+After confirmation of schema we are able to create report by "Create Report" button.
+
+## Performance
+
+Originally we used Google Data Studio features to joint data together - [data blending](https://support.google.com/datastudio/answer/9061420?hl=en&ref_topic=9061419), but it caused a performance issue.
+
+Every "widget" on the Google Data Studio Page uses connector to fetch data and we had a separate connector for each measurement:
+
+> 3 measurement x 8 widget = 24 connection to InfluxDB + Data Blending overhead for each refresh    
+
 ## Links
 
 - Create your Report: [https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
