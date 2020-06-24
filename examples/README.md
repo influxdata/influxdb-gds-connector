@@ -90,6 +90,19 @@ influx write --header=#datatype ignored,dateTime:01/02/2006,ignored,ignored,igno
     --header=#constant measurement,covid_Bing-COVID19-Data --file /usr/src/data/Bing-COVID19-Data.csv --skipRowOnError
 ```
 
+## Configure InfluxDB Connector
+
+### Configure connection
+
+1. https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs
+1. Fill `URL`, `Token`, `Organization`, `Bucket` and `Measurement`
+
+<img src="GDS-configuration.png" height="350px">
+
+### Confirm following schema
+
+<img src="GDS-schema.png" height="350px">
+
 ## Links
 
 - Create your Report: [https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
