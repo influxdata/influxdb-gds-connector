@@ -32,9 +32,8 @@ Try it in Google Data Studio:
 - https://script.google.com/home/projects/18YPFhvO1TMR7QFCw2iFuIH_1_iPvFIYrnT3fg8J7skoqUd5x7YAnPD7_/executions?run_as=1
 
 ##### TODO:
-1. implement filtering
 1. v1 support
-1. custom FLUX
+1. cache
 
 [Data Studio]: https://datastudio.google.com
 [Connector]: https://developers.google.com/datastudio/connector

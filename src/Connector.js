@@ -199,6 +199,7 @@ function getSchema(request) {
 }
 
 function getData(request) {
+  const start = new Date()
   const client = new InfluxDBClient()
   const names = request.fields.map(field => field.name)
 
@@ -215,6 +216,8 @@ function getData(request) {
       request.dateRange,
       fieldsFiltered
     )
+
+    Logger.log('GetData took: "%s" milliseconds. [%s]', new Date() - start)
 
     return {
       schema: fieldsFiltered,

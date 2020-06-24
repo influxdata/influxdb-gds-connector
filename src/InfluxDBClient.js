@@ -267,6 +267,8 @@ InfluxDBClient.prototype.getData = function (
     })
     .reduce((array1, array2) => array1.concat(array2), [])
 
+  Logger.log('Mapped response to: %s', rows)
+
   return rows
 }
 
@@ -352,6 +354,8 @@ InfluxDBClient.prototype._extractData = function (textContent) {
         table.rows.push(line)
       }
     })
+
+  Logger.log('Parsed response to: %s', tables)
 
   return tables
 }
