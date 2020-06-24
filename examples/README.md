@@ -115,7 +115,7 @@ Every "widget" on the Google Data Studio Page uses connector to fetch data and w
 
 For joining data together we use InfluxDB Task:
 
-[<img src="flux.png" height="350px">](task.flux)
+[<img src="flux.png" height="550px">](task.flux)
 
 ## Links
 
