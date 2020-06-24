@@ -10,11 +10,11 @@ mkdir -p "${SCRIPT_PATH}"/tmp
 # INFLUX_TOKEN
 # INFLUX_BUCKET_ID
 # INFLUX_ORG_ID
+# influx delete --start 1970-01-01T00:00:00Z --stop 2022-01-01T00:00:00Z --bucket COVID-19-GDS
 
 csv_files=(
 "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/ecdc/full_data.csv|dateTime:2006-01-02,tag,long,long,long,long"
 "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/ecdc/locations.csv|tag,tag,tag,dateTime:2006,long"
-"https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/testing/covid-testing-all-observations.csv|tag,tag,dateTime:2006-01-02,ignored,ignored,ignored,long,long,double,double,long,double"
 "https://raw.githubusercontent.com/microsoft/Bing-COVID-19-Data/master/data/Bing-COVID19-Data.csv|ignored,dateTime:01/02/2006,ignored,ignored,ignored,ignored,long,long,ignored,ignored,tag,tag,tag,tag,tag"
 )
 
