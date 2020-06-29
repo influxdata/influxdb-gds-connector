@@ -56,6 +56,21 @@ After you have reviewed the fields, press "CREATE REPORT" button to create your 
 
 <img src="docs/datastudio-report.png" height="350px">
 
+## Inspiration
+
+- [COVID-19 report powered by InfluxDB](/examples/)
+
+## Troubleshooting
+
+### This app isn't verified
+
+When authorizing the connector, an OAuth consent screen may be presented to you with a warning "This app isn't verified". 
+This is because the connector has requested authorization to make requests to an external API (E.g. to fetch data from the service you're connecting to). 
+
+> This warning will no longer be display after the connector will include in Partner connectors gallery - see #1
+
+
+
 [Data Studio]: https://datastudio.google.com
 [Connector]: https://developers.google.com/datastudio/connector
 [InfluxDB v2]: https://www.influxdata.com/products/influxdb-overview/influxdb-2-0/
