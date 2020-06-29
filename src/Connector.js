@@ -64,7 +64,8 @@ function getFields(request, cached, client) {
     return fields
   } catch (e) {
     throwUserError(
-      `"GetFields from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`
+      `"GetFields from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`,
+      e
     )
   }
 }
@@ -131,7 +132,8 @@ function getConfig(request) {
       })
     } catch (e) {
       throwUserError(
-        `"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`
+        `"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`,
+        e
       )
     }
   }
@@ -157,7 +159,8 @@ function getConfig(request) {
       })
     } catch (e) {
       throwUserError(
-        `"GetMeasurements from: ${configParams.INFLUXDB_URL}" returned an error:${e}`
+        `"GetMeasurements from: ${configParams.INFLUXDB_URL}" returned an error:${e}`,
+        e
       )
     }
   }
@@ -227,7 +230,8 @@ function getData(request) {
     }
   } catch (e) {
     throwUserError(
-      `"GetData from: ${request.configParams.INFLUXDB_URL}" for fields: ${fieldsFiltered} returned an error:${e}`
+      `"GetData from: ${request.configParams.INFLUXDB_URL}" for fields: ${fieldsFiltered} returned an error:${e}`,
+      e
     )
   }
 }
@@ -241,7 +245,7 @@ function validateConfig(configParams) {
   const client = new InfluxDBClient()
   let errors = client.validateConfig(configParams)
   if (errors) {
-    throwUserError(errors)
+    throwUserError(errors, '')
   }
 }
 
@@ -249,11 +253,14 @@ function validateConfig(configParams) {
  * Throws User-facing errors.
  *
  * @param  {string} message Error message.
+ * @param {string} error original Error
  */
-function throwUserError(message) {
+function throwUserError(message, error) {
+  console.error('The connector yielded an error: ' + error)
   DataStudioApp.createCommunityConnector()
     .newUserError()
     .setText(message)
+    .setDebugText(error)
     .throwException()
 }
 

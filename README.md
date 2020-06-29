@@ -10,8 +10,7 @@
 
 *This is not an official Google product.*
 
-This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] instances through the [InfluxDB API]. Connect your InfluxDB to Google Data Studio and start pushing  your data to in minutes.
-
+This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] instances through the [InfluxDB API].
 ## How it works
 
 Connect your InfluxDB to Google Data Studio and start pushing  your data to in minutes.
@@ -20,7 +19,7 @@ Connect your InfluxDB to Google Data Studio and start pushing  your data to in m
 
 #### Direct link
 
-To add the InfluxDB Connector in Data Studio you can use this [link](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs), create a new datasource. 
+To add the InfluxDB Connector in Data Studio you can use this link: [create a new datasource](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs). 
 
 #### From Data Studio
 
@@ -67,9 +66,7 @@ After you have reviewed the fields, press "CREATE REPORT" button to create your 
 When authorizing the connector, an OAuth consent screen may be presented to you with a warning "This app isn't verified". 
 This is because the connector has requested authorization to make requests to an external API (E.g. to fetch data from the service you're connecting to). 
 
-> This warning will no longer be display after the connector will include in Partner connectors gallery - see #1
-
-
+> This warning will no longer be display after the connector will include in Partner connectors gallery - see [#2](https://github.com/bonitoo-io/influxdb-gds-connector/issues/2)
 
 [Data Studio]: https://datastudio.google.com
 [Connector]: https://developers.google.com/datastudio/connector
