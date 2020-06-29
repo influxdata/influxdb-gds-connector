@@ -1,4 +1,4 @@
-# InfluxDB Connector for Data Studio
+# InfluxDB Connector for Google Data Studio
 
 [![CircleCI](https://circleci.com/gh/bonitoo-io/influxdb-gds-connector.svg?style=svg)](https://circleci.com/gh/bonitoo-io/influxdb-gds-connector)
 [![codecov](https://codecov.io/gh/bonitoo-io/influxdb-gds-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/influxdb-gds-connector)
@@ -10,30 +10,51 @@
 
 *This is not an official Google product.*
 
-This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] instances through the [InfluxDB API].
+This [Data Studio] [Connector] lets users query datasets from [InfluxDB v2] instances through the [InfluxDB API]. Connect your InfluxDB to Google Data Studio and start pushing  your data to in minutes.
 
----
+## How it works
 
-Try it in Google Data Studio:
- - [from scratch](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
- - [preconfigured](https://datastudio.google.com/datasources/create?connectorConfig=%7B%22INFLUXDB_URL%22%3A%22https%3A%2F%2Fus-west-2-1.aws.cloud2.influxdata.com%22%2C%22INFLUXDB_TOKEN%22%3A%22JQGzXQvquG3VFy_9L0BXDNwmJF2DiurK1aLBRTMIctODpnlr5kY6gBay3HmtWcRnb81dSM9rb8TEXgmhV2LHjw%3D%3D%22%2C%22INFLUXDB_ORG%22%3A%22jakub_bednar%22%7D&connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
- - [dashboard](https://datastudio.google.com/reporting/a3c5c14c-ed1d-4100-8c6e-9dccc50faa35)
+Connect your InfluxDB to Google Data Studio and start pushing  your data to in minutes.
 
----
+### How to add the InfluxDB Connector to Data Studio
 
-#### Development
+#### Direct link
 
-- https://developers.google.com/datastudio/connector
-- https://developers.google.com/datastudio/connector/reference
-- https://developers.google.com/datastudio/connector/local-development
-- https://github.com/googledatastudio/community-connectors/blob/master/kaggle/README.md 
-- https://github.com/OlegOdnoral/RA_GoogleDataStudio_Adapter/blob/master/src/main.js
-- https://github.com/the-unbelievable-machine/mite-js-google-datastudio-connector
-- https://script.google.com/home/projects/18YPFhvO1TMR7QFCw2iFuIH_1_iPvFIYrnT3fg8J7skoqUd5x7YAnPD7_/executions?run_as=1
+To add the InfluxDB Connector in Data Studio you can use this [link](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs), create a new datasource. 
 
-##### TODO:
-1. v1 support
-1. cache
+#### From Data Studio
+
+TBD: If you are already in Data Studio, click the "Create" button and select "Data Source". From there you can search for the InfluxDB Connector.
+
+<img src="docs/datastudio-connector.png" height="350px">
+
+### Connect your InfluxDB to Data Studio
+
+To access your InfluxDB, enter your Connection information: 
+
+- `InfluxDB URL` 
+- `Token` 
+- `Organization` 
+- `Bucket` 
+- `Measurement` 
+
+<img src="docs/datastudio-connection.jpg" height="350px">
+
+- [How to retrieve the Organization](https://v2.docs.influxdata.com/v2.0/organizations/view-orgs/)
+- [How to retrieve the Token](https://v2.docs.influxdata.com/v2.0/security/tokens/view-tokens/)
+
+#### Set up Metrics
+
+Once you are connected, Data Studio will show you a list of all the fields available from your **Measurement**. 
+This includes your _Tag set_, _Field set_ and _Timestamp_. 
+
+<img src="docs/datastudio-fields.png" height="350px">
+
+### Visualize your data in Data Studio
+
+After you have reviewed the fields, press "CREATE REPORT" button to create your report. 
+
+<img src="docs/datastudio-report.png" height="350px">
 
 [Data Studio]: https://datastudio.google.com
 [Connector]: https://developers.google.com/datastudio/connector
