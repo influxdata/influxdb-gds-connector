@@ -1,11 +1,11 @@
 # InfluxDB Connector for Google Data Studio
 
-[![CircleCI](https://circleci.com/gh/bonitoo-io/influxdb-gds-connector.svg?style=svg)](https://circleci.com/gh/bonitoo-io/influxdb-gds-connector)
-[![codecov](https://codecov.io/gh/bonitoo-io/influxdb-gds-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/bonitoo-io/influxdb-gds-connector)
+[![CircleCI](https://circleci.com/gh/influxdata/influxdb-gds-connector.svg?style=svg)](https://circleci.com/gh/influxdata/influxdb-gds-connector)
+[![codecov](https://codecov.io/gh/influxdata/influxdb-gds-connector/branch/master/graph/badge.svg)](https://codecov.io/gh/influxdata/influxdb-gds-connector)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![License](https://img.shields.io/github/license/bonitoo-io/influxdb-gds-connector.svg)](https://github.com/bonitoo-io/influxdb-gds-connector/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues-raw/bonitoo-io/influxdb-gds-connector.svg)](https://github.com/bonitoo-io/influxdb-gds-connector/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/bonitoo-io/influxdb-gds-connector.svg)](https://github.com/bonitoo-io/influxdb-gds-connector/pulls)
+[![License](https://img.shields.io/github/license/influxdata/influxdb-gds-connector.svg)](https://github.com/influxdata/influxdb-gds-connector/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues-raw/influxdata/influxdb-gds-connector.svg)](https://github.com/influxdata/influxdb-gds-connector/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/influxdata/influxdb-gds-connector.svg)](https://github.com/influxdata/influxdb-gds-connector/pulls)
 [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://www.influxdata.com/slack)
 
 *This is not an official Google product.*
@@ -66,7 +66,7 @@ After you have reviewed the fields, press "CREATE REPORT" button to create your 
 When authorizing the connector, an OAuth consent screen may be presented to you with a warning "This app isn't verified". 
 This is because the connector has requested authorization to make requests to an external API (E.g. to fetch data from the service you're connecting to). 
 
-> This warning will no longer be display after the connector will include in Partner connectors gallery - see [#2](https://github.com/bonitoo-io/influxdb-gds-connector/issues/2)
+> This warning will no longer be display after the connector will include in Partner connectors gallery - see [#2](https://github.com/influxdata/influxdb-gds-connector/issues/2)
 
 [Data Studio]: https://datastudio.google.com
 [Connector]: https://developers.google.com/datastudio/connector
