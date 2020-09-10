@@ -34,14 +34,14 @@ describe('get buckets', () => {
     Utilities.parseCsv.mockReturnValue(csv)
 
     let configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999'
+    configParams.INFLUXDB_URL = 'http://localhost:8086'
     configParams.INFLUXDB_TOKEN = 'my-token'
     configParams.INFLUXDB_ORG = 'my-org'
 
     let buckets = client.getBuckets(configParams)
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/vnd.flux',
@@ -72,7 +72,7 @@ describe('get measurements', () => {
     Utilities.parseCsv.mockReturnValue(csv)
 
     let configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999'
+    configParams.INFLUXDB_URL = 'http://localhost:8086'
     configParams.INFLUXDB_TOKEN = 'my-token'
     configParams.INFLUXDB_ORG = 'my-org'
     configParams.INFLUXDB_BUCKET = 'my-bucket'
@@ -80,7 +80,7 @@ describe('get measurements', () => {
     let buckets = client.getMeasurements(configParams)
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/vnd.flux',
@@ -107,7 +107,7 @@ v1.tagValues(
 
 describe('get fields', () => {
   let configParams = {}
-  configParams.INFLUXDB_URL = 'http://localhost:9999'
+  configParams.INFLUXDB_URL = 'http://localhost:8086'
   configParams.INFLUXDB_TOKEN = 'my-token'
   configParams.INFLUXDB_ORG = 'my-org'
   configParams.INFLUXDB_BUCKET = 'my-bucket'
@@ -143,7 +143,7 @@ describe('get fields', () => {
     let fields = client.getFields(configParams)
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(2)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/vnd.flux',
@@ -163,7 +163,7 @@ v1.tagKeys(
 |> filter(fn: (r) => r._value != "_start" and r._value != "_stop" and r._value != "_measurement" and r._value != "_field")`,
     })
     expect(UrlFetchApp.fetch.mock.calls[1][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[1][1]).toStrictEqual({
       contentType: 'application/json',
@@ -358,7 +358,7 @@ describe('get data', () => {
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999'
+    configParams.INFLUXDB_URL = 'http://localhost:8086'
     configParams.INFLUXDB_TOKEN = 'my-token'
     configParams.INFLUXDB_ORG = 'my-org'
     configParams.INFLUXDB_BUCKET = 'my-bucket'
@@ -379,7 +379,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -492,7 +492,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -659,7 +659,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -716,7 +716,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -748,7 +748,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -767,7 +767,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -810,7 +810,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -836,7 +836,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -862,7 +862,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -908,7 +908,7 @@ describe('get data', () => {
 
     expect(UrlFetchApp.fetch.mock.calls.length).toBe(1)
     expect(UrlFetchApp.fetch.mock.calls[0][0]).toBe(
-      'http://localhost:9999/api/v2/query?org=my-org'
+      'http://localhost:8086/api/v2/query?org=my-org'
     )
     expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
       contentType: 'application/json',
@@ -930,28 +930,28 @@ describe('get data', () => {
 describe('build URL', () => {
   test('value', () => {
     let configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999'
+    configParams.INFLUXDB_URL = 'http://localhost:8086'
     configParams.INFLUXDB_ORG = 'my-org'
 
     let url = client._buildURL(configParams)
-    expect(url).toEqual('http://localhost:9999/api/v2/query?org=my-org')
+    expect(url).toEqual('http://localhost:8086/api/v2/query?org=my-org')
   })
 
   test('slash at the end', () => {
     let configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999/'
+    configParams.INFLUXDB_URL = 'http://localhost:8086/'
     configParams.INFLUXDB_ORG = 'my-org'
 
     let url = client._buildURL(configParams)
-    expect(url).toEqual('http://localhost:9999/api/v2/query?org=my-org')
+    expect(url).toEqual('http://localhost:8086/api/v2/query?org=my-org')
   })
 
   test('escaped org', () => {
     let configParams = {}
-    configParams.INFLUXDB_URL = 'http://localhost:9999'
+    configParams.INFLUXDB_URL = 'http://localhost:8086'
     configParams.INFLUXDB_ORG = 'my org'
 
     let url = client._buildURL(configParams)
-    expect(url).toEqual('http://localhost:9999/api/v2/query?org=my%20org')
+    expect(url).toEqual('http://localhost:8086/api/v2/query?org=my%20org')
   })
 })

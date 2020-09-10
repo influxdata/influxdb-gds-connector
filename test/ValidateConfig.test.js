@@ -6,7 +6,7 @@ let validConfigurations
 beforeEach(() => {
   client = new require_import.InfluxDBClient()
   validConfigurations = {}
-  validConfigurations.INFLUXDB_URL = 'http://localhost:9999'
+  validConfigurations.INFLUXDB_URL = 'http://localhost:8086'
   validConfigurations.INFLUXDB_TOKEN = 'my-token'
   validConfigurations.INFLUXDB_ORG = 'my-org'
   validConfigurations.INFLUXDB_BUCKET = 'my-bucket'
