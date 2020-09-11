@@ -33,7 +33,7 @@ test('getData', () => {
     connector.getData({
       fields: [],
       configParams: {
-        INFLUXDB_URL: 'http://localhost:9999',
+        INFLUXDB_URL: 'http://localhost:8086',
         INFLUXDB_TOKEN: 'my-token',
         INFLUXDB_ORG: 'my-org',
       },
