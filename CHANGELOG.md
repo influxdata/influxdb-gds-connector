@@ -1,5 +1,8 @@
 ## [unreleased]
 
+### Bug Fixes
+1. [#9](https://github.com/influxdata/influxdb-gds-connector/pull/9): Optimize Schema Query
+
 ### CI
 1. [#14](https://github.com/influxdata/influxdb-gds-connector/pull/14): Switch to next-gen CircleCI's convenience images
 
