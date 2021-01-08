@@ -12,7 +12,7 @@ As a dataset we will use there different sources:
 
 ### 1. Confirmed cases and deaths
 
-- source: [Our World in Data - COVID-19](https://github.com/owid/covid-19-data/blob/master/public/data/ecdc/full_data.csv) 
+- source: [Our World in Data - COVID-19](https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv) 
 
 ```csv
 date,location,new_cases,new_deaths,total_cases,total_deaths
@@ -57,7 +57,7 @@ Chad,Chad,Africa,2020,16425859
 
 ### 3. Recovered cases
 
-- source: [Bing COVID-19 data - recovered cases from all regions](https://github.com/microsoft/Bing-COVID-19-Data/blob/master/data/Bing-COVID19-Data.csv)
+- source: [Bing COVID-19 data - recovered cases from all regions](https://media.githubusercontent.com/media/microsoft/Bing-COVID-19-Data/master/data/Bing-COVID19-Data.csv)
 
 ```csv
 ID,Updated,Confirmed,ConfirmedChange,Deaths,DeathsChange,Recovered,RecoveredChange,Latitude,Longitude,ISO2,ISO3,Country_Region,AdminRegion1,AdminRegion2
@@ -80,8 +80,8 @@ ID,Updated,Confirmed,ConfirmedChange,Deaths,DeathsChange,Recovered,RecoveredChan
 If we assumed that the files are store in `/usr/src/data`, than can be imported by:
 
 ```bash
-influx write --header=#datatype dateTime:2006-01-02,tag,long,long,long,long --header=#constant measurement,covid_full_data \ 
-    --file /usr/src/data/full_data.csv --skipRowOnError
+influx write --header=#datatype ignored,ignored,tag,dateTime:2006-01-02,long,long,ignored,long,long --header=#constant measurement,covid_full_data \ 
+    --file /usr/src/data/owid-covid-data.csv --skipRowOnError
 
 influx write --header=#datatype tag,tag,tag,dateTime:2006,long --header=#constant measurement,covid_locations \
     --file /usr/src/data/locations.csv --skipRowOnError
