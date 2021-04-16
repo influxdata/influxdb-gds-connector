@@ -302,7 +302,7 @@ InfluxDBClient.prototype._extractSchema = function (textContent) {
   let values = []
   let value_index
   csv.forEach(function (row) {
-    if (!value_index) {
+    if (!value_index || value_index === -1) {
       value_index = row.indexOf('_value')
     } else {
       let bucket = row[value_index]
