@@ -379,12 +379,14 @@ function _toOriginalFieldName(name) {
 }
 
 class InfluxDBTable {
-  group
-  data_types
-  defaults
-  names
-  rows = []
-  fields = []
+  constructor() {
+    this.group = []
+    this.data_types = []
+    this.defaults = []
+    this.names = []
+    this.rows = []
+    this.fields = []
+  }
 
   parseSchema() {
     let data_types = this.data_types.slice(3)
