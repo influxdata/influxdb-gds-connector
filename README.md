@@ -61,6 +61,14 @@ After you have reviewed the fields, press "CREATE REPORT" button to create your 
 
 - [COVID-19 report powered by InfluxDB](/examples/)
 
+## InfluxDB 1.8 compatibility
+
+[InfluxDB 1.8.0 introduced forward compatibility APIs](https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-20-api-compatibility-endpoints) for InfluxDB 2.0. This allow you to easily move from InfluxDB 1.x to InfluxDB 2.0 Cloud or open source.
+
+Connector usage differences:
+1. Use the form `username:password` for an **authentication token**. Example: `my-user:my-password`. Use an empty string (`""`) if the server doesn't require authentication.
+1. The organization parameter is not used. Use a string `-` as a value.
+
 ## Troubleshooting
 
 ### This app isn't verified
