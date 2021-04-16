@@ -19,7 +19,9 @@ Connect your InfluxDB to Google Data Studio and start pushing  your data to in m
 
 #### Direct link
 
-To add the InfluxDB Connector in Data Studio you can use this link: [create a new datasource](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs). 
+To add the InfluxDB Connector in Data Studio you can use this link: 
+
+[![Use InfluxDB DataSource](docs/button.png)](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs). 
 
 #### From Data Studio
 
