@@ -82,3 +82,35 @@ This is because the connector has requested authorization to make requests to an
 [Connector]: https://developers.google.com/datastudio/connector
 [InfluxDB v2]: https://www.influxdata.com/products/influxdb-overview/influxdb-2-0/
 [InfluxDB API]: https://v2.docs.influxdata.com/v2.0/reference/api/
+
+## Development
+
+- Test version of the Connector: [AKfycbySDF4eD7wmA_awZ6aoCwENuXs1Opw_T0DIJ8F](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbySDF4eD7wmA_awZ6aoCwENuXs1Opw_T0DIJ8F-MVI)
+- Production version of the Connector: [AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
+
+Open Apps Script project in your browser:
+
+```bash
+$ yarn open
+```
+
+Push your local changes to Apps Script:
+
+```bash
+$ yarn push
+```
+
+Update the production deployment of connector:
+
+```bash
+$ yarn deploy
+```
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/influxdata/influxdb-gds-connector.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+

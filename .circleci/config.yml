@@ -43,10 +43,7 @@ jobs:
           command: echo $CLASPRC_JSON > ~/.clasprc.json
       - run:
           name: Publish changes to Apps Script
-          command: npm run push
-      - run:
-          name: Update production deployment to use latest code
-          command: npm run update_production
+          command: yarn push
       - save_cache:
           paths:
             - node_modules
