@@ -955,3 +955,34 @@ describe('build URL', () => {
     expect(url).toEqual('http://localhost:8086/api/v2/query?org=my%20org')
   })
 })
+
+describe('extractSchema', () => {
+  beforeEach(() => {
+    Utilities.parseCsv.mockImplementation(rows => {
+      return rows.split('\n').map(row => row.trim().split(','))
+    })
+  })
+
+  test('without comment', () => {
+    let textContent = `,result,table,_value
+,,0,_internal/monitor
+,,0,telegraf/autogen
+`
+
+    let values = client._extractSchema(textContent)
+    expect(values).toHaveLength(2)
+    expect(values).toEqual(['_internal/monitor', 'telegraf/autogen'])
+  })
+
+  test('with comment', () => {
+    let textContent = `#group,false,false,false
+#default,_result,,
+,result,table,_value
+,,0,_internal/monitor
+,,0,telegraf/autogen`
+
+    let values = client._extractSchema(textContent)
+    expect(values).toHaveLength(2)
+    expect(values).toEqual(['_internal/monitor', 'telegraf/autogen'])
+  })
+})

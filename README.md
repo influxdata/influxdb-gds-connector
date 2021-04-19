@@ -19,7 +19,9 @@ Connect your InfluxDB to Google Data Studio and start pushing  your data to in m
 
 #### Direct link
 
-To add the InfluxDB Connector in Data Studio you can use this link: [create a new datasource](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs). 
+To add the InfluxDB Connector in Data Studio you can use this link: 
+
+[![Use InfluxDB DataSource](docs/button.png)](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs). 
 
 #### From Data Studio
 
@@ -59,6 +61,14 @@ After you have reviewed the fields, press "CREATE REPORT" button to create your 
 
 - [COVID-19 report powered by InfluxDB](/examples/)
 
+## InfluxDB 1.8 compatibility
+
+[InfluxDB 1.8.0 introduced forward compatibility APIs](https://docs.influxdata.com/influxdb/v1.8/tools/api/#influxdb-20-api-compatibility-endpoints) for InfluxDB 2.0. This allow you to easily move from InfluxDB 1.x to InfluxDB 2.0 Cloud or open source.
+
+Connector usage differences:
+1. Use the form `username:password` for an **authentication token**. Example: `my-user:my-password`. Use an empty string (`""`) if the server doesn't require authentication.
+1. The organization parameter is not used. Use a string `-` as a value.
+
 ## Troubleshooting
 
 ### This app isn't verified
@@ -72,3 +82,35 @@ This is because the connector has requested authorization to make requests to an
 [Connector]: https://developers.google.com/datastudio/connector
 [InfluxDB v2]: https://www.influxdata.com/products/influxdb-overview/influxdb-2-0/
 [InfluxDB API]: https://v2.docs.influxdata.com/v2.0/reference/api/
+
+## Development
+
+- Test version of the Connector: [AKfycbySDF4eD7wmA_awZ6aoCwENuXs1Opw_T0DIJ8F](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbySDF4eD7wmA_awZ6aoCwENuXs1Opw_T0DIJ8F-MVI)
+- Production version of the Connector: [AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs](https://datastudio.google.com/u/0/datasources/create?connectorId=AKfycbwhJChhmMypQvNlihgRJMAhCb8gaM3ii9oUNWlW_Cp2PbJSfqeHfPyjNVp15iy9ltCs)
+
+Open Apps Script project in your browser:
+
+```bash
+$ yarn open
+```
+
+Push your local changes to Apps Script:
+
+```bash
+$ yarn push
+```
+
+Update the production deployment of connector:
+
+```bash
+$ yarn deploy
+```
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/influxdata/influxdb-gds-connector.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+

@@ -296,10 +296,10 @@
     typescript "^3.6.2"
     watch "^1.0.2"
 
-"@google/dscc-scripts@^1.0.16":
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/@google/dscc-scripts/-/dscc-scripts-1.0.16.tgz#994621620f25beb0c831288ccc9760ed79b91ce4"
-  integrity sha512-l0bm3O7zLdTdoKKrhkQQXd4JTglCg8rmjiVAKygb0WYYdR34uEo1zluOnN/zZpdqu4x31KuoT6WCmoVn+SxOkQ==
+"@google/dscc-scripts@^1.0.17":
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/@google/dscc-scripts/-/dscc-scripts-1.0.17.tgz#c8c761ed81d00eca218f3919321175f49d1f678f"
+  integrity sha512-q0DDEfzRenwLIcHAMWHNMRxIK4ldtPN2CM+uWRCUZFJD6Gpylglucl5rnJ2r62z7Fv7M6XHkG74cu0w9AaF/gw==
   dependencies:
     "@google/dscc" "^0.3.17"
     "@google/dscc-validation" "^1.0.4"

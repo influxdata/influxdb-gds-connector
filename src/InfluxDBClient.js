@@ -302,7 +302,7 @@ InfluxDBClient.prototype._extractSchema = function (textContent) {
   let values = []
   let value_index
   csv.forEach(function (row) {
-    if (!value_index) {
+    if (!value_index || value_index === -1) {
       value_index = row.indexOf('_value')
     } else {
       let bucket = row[value_index]
@@ -379,12 +379,14 @@ function _toOriginalFieldName(name) {
 }
 
 class InfluxDBTable {
-  group
-  data_types
-  defaults
-  names
-  rows = []
-  fields = []
+  constructor() {
+    this.group = []
+    this.data_types = []
+    this.defaults = []
+    this.names = []
+    this.rows = []
+    this.fields = []
+  }
 
   parseSchema() {
     let data_types = this.data_types.slice(3)
