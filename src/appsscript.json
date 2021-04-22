@@ -17,6 +17,9 @@
     "description": "Connect to and visualize InfluxDB time series data. This connector supports one measurement from defined bucket and organization for each data source. Add the connector multiple times for multiple data sources. To create InfluxDB Cloud account visit: https://cloud2.influxdata.com/signup.",
     "authType": ["NONE"],
     "feeType": ["FREE"],
-    "sources": ["INFLUXDB"]
+    "sources": ["INFLUXDB"],
+    "oauthScopes": [
+      "https://www.googleapis.com/auth/script.external_request"
+    ]
   }
 }
