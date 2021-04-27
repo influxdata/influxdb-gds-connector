@@ -18,5 +18,8 @@
     "authType": ["NONE"],
     "feeType": ["FREE"],
     "sources": ["INFLUXDB"]
-  }
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request"
+  ]
 }
