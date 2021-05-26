@@ -1211,3 +1211,54 @@ describe('extractSchema', () => {
     expect(values).toEqual(['_internal/monitor', 'telegraf/autogen'])
   })
 })
+
+describe('schema query', () => {
+  let configParams = {}
+  configParams.INFLUXDB_URL = 'http://localhost:8086'
+  configParams.INFLUXDB_TOKEN = 'my-token'
+  configParams.INFLUXDB_ORG = 'my-org'
+  configParams.INFLUXDB_BUCKET = 'my-bucket'
+  configParams.INFLUXDB_MEASUREMENT = 'circleci'
+
+  beforeEach(() => {
+    Utilities.parseCsv.mockImplementation(rows => {
+      return rows.split('\n').map(row => row.trim().split(','))
+    })
+
+    const fs = require('fs')
+    const csv = fs.readFileSync(__dirname + '/schema1.csv', 'utf8')
+    let httpResponse = jest.fn()
+    httpResponse.getContentText = jest.fn()
+    httpResponse.getContentText.mockReturnValue(csv)
+
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+  })
+
+  test('default', () => {
+    validatePayload('duration(v: uint(v: 1970-01-01) - uint(v: now()))')
+  })
+
+  test('defined_start_range', () => {
+    configParams.INFLUXDB_SCHEMA_RANGE = '-6h'
+    validatePayload('-6h')
+  })
+
+  test('empty_string', () => {
+    configParams.INFLUXDB_SCHEMA_RANGE = ''
+    validatePayload('duration(v: uint(v: 1970-01-01) - uint(v: now()))')
+  })
+
+  function validatePayload(expectedRange) {
+    client.getFields(configParams)
+    expect(UrlFetchApp.fetch.mock.calls[0][1]).toStrictEqual({
+      contentType: 'application/json',
+      headers: {
+        Accept: 'application/csv',
+        Authorization: 'Token my-token',
+        'User-Agent': 'influxdb-gds-connector',
+      },
+      method: 'post',
+      payload: `{"query":\"import \\"influxdata/influxdb/v1\\" bucket = \\"my-bucket\\" measurement = \\"circleci\\" start_range = ${expectedRange} v1.tagKeys( bucket: bucket, predicate: (r) => r._measurement == measurement, start: start_range ) |> filter(fn: (r) => r._value != \\"_start\\" and r._value != \\"_stop\\" and r._value != \\"_measurement\\" and r._value != \\"_field\\") |> yield(name: \\"tags\\") from(bucket: bucket) |> range(start: start_range) |> filter(fn: (r) => r[\\"_measurement\\"] == measurement) |> keep(fn: (column) => column == \\"_field\\" or column == \\"_value\\") |> unique(column: \\"_field\\") |> yield(name: \\"fields\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
+    })
+  }
+})

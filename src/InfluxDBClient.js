@@ -13,12 +13,15 @@ v1.tagValues(
   start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
 )`
 
-const QUERY_SCHEMA = (bucket_name, measurement_name) => {
+const QUERY_SCHEMA = (bucket_name, measurement_name, schema_range) => {
+  let start_range = schema_range
+    ? schema_range
+    : `duration(v: uint(v: 1970-01-01) - uint(v: now()))`
   let query =
     `import \\"influxdata/influxdb/v1\\" ` +
     `bucket = \\"${bucket_name}\\" ` +
     `measurement = \\"${measurement_name}\\" ` +
-    `start_range = duration(v: uint(v: 1970-01-01) - uint(v: now())) ` +
+    `start_range = ${start_range} ` +
     `v1.tagKeys( ` +
     `bucket: bucket, ` +
     `predicate: (r) => r._measurement == measurement, ` +
@@ -155,7 +158,8 @@ InfluxDBClient.prototype.getFields = function (configParams) {
 
   let querySchema = QUERY_SCHEMA(
     configParams.INFLUXDB_BUCKET,
-    configParams.INFLUXDB_MEASUREMENT
+    configParams.INFLUXDB_MEASUREMENT,
+    configParams.INFLUXDB_SCHEMA_RANGE
   )
 
   let tables = this._query(configParams, querySchema, {
