@@ -78,14 +78,14 @@ This is because the connector has requested authorization to make requests to an
 
 > This warning will no longer be display after the connector will include in Partner connectors gallery - see [#2](https://github.com/influxdata/influxdb-gds-connector/issues/2)
 
-### Query takes too much time
+### Data optimize
 
 The connector uses two types of query: `schema query` and `data query`. 
-Please, check both of them that correctly works with your dataset.
+Please, check that both of them correctly works with your dataset.
 
 #### Schema query
 
-It is used to determine all your fields from configured `Bucket` and `Measurement`. The query is use only in the configuration.
+It is used to determine all your fields from configured `Bucket` and `Measurement`. The query is used only in the configuration.
 
 ```flux
 import "influxdata/influxdb/v1"
@@ -108,6 +108,10 @@ from(bucket: bucket)
   |> unique(column: "_field")
   |> yield(name: "fields")
 ```
+
+You can optimize this query by `Schema Query Range` configuration in first step of Data Studio connection wizard:
+
+<img src="docs/datastudio-schema-query-range.png" height="350px">
 
 #### Data query
 
