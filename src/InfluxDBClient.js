@@ -296,6 +296,7 @@ InfluxDBClient.prototype._query = function (
 ) {
   const options = {
     method: 'post',
+    muteHttpExceptions: true,
     payload: query,
     contentType: configs.contentType,
     headers: {
@@ -305,7 +306,13 @@ InfluxDBClient.prototype._query = function (
     },
   }
   let url = this._buildURL(configParams)
-  const response = UrlFetchApp.fetch(url, options).getContentText()
+  let httpResponse = UrlFetchApp.fetch(url, options)
+
+  const response = this._contentTextOrThrowUserError(
+    httpResponse,
+    query,
+    configs.contentType
+  )
 
   return configs.mapping(response)
 }
@@ -384,6 +391,57 @@ InfluxDBClient.prototype._buildURL = function (configParams) {
   return url
 }
 
+/**
+ * Get Content Response Text or Throw InfluxDBError
+ *
+ * @param  {HTTPResponse} response Error message.
+ * @param  {string?} payload HTTP payload.
+ * @param  {string} queryContentType Type of query
+ */
+InfluxDBClient.prototype._contentTextOrThrowUserError = function (
+  response,
+  payload,
+  queryContentType = 'application/vnd.flux'
+) {
+  const responseCode = response.getResponseCode()
+  if (responseCode >= 200 && responseCode <= 299) {
+    return response.getContentText()
+  }
+
+  const headers = response.getHeaders()
+  const errorHeader = headers
+    ? Object.keys(headers).filter(header =>
+        [
+          'x-platform-error-code',
+          'x-influx-error',
+          'x-influxdb-error',
+        ].includes(header.toLowerCase())
+      )[0]
+    : null
+
+  const debugInformation = {
+    responseCode: responseCode,
+    headers: headers,
+    contentText: response.getContentText(),
+    payload: payload,
+  }
+  const message = errorHeader
+    ? headers[errorHeader]
+    : debugInformation.contentText
+
+  let fluxQuery = payload
+  if ('application/json' === queryContentType) {
+    try {
+      let jsonPayload = JSON.parse(payload)
+      fluxQuery = jsonPayload.query ? jsonPayload.query : payload
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  throw new InfluxDBError(message, debugInformation, fluxQuery)
+}
+
 function _sanitizeFieldName(name) {
   return name.replace(/\s/g, '__space__').replace(/-/g, '__minus__')
 }
@@ -441,6 +499,14 @@ class InfluxDBTable {
       const field = parseFieldSchema(names[index], type)
       this.fields.push(field)
     })
+  }
+}
+
+class InfluxDBError extends Error {
+  constructor(message, debugInformation, fluxQuery) {
+    super(message)
+    this.debugText = JSON.stringify(debugInformation, null, 4)
+    this.fluxQuery = fluxQuery
   }
 }
 

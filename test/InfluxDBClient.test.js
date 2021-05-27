@@ -9,6 +9,8 @@ beforeEach(() => {
 
   let httpResponse = jest.fn()
   httpResponse.getContentText = jest.fn()
+  httpResponse.getResponseCode = jest.fn()
+  httpResponse.getResponseCode.mockReturnValue(200)
 
   UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
@@ -51,6 +53,7 @@ describe('get buckets', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `buckets() |> rename(columns: {"name": "_value"}) |> keep(columns: ["_value"]) |> sort(columns: ["_value"], desc: false)`,
     })
 
@@ -90,6 +93,7 @@ describe('get measurements', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `import "influxdata/influxdb/v1"
 
 v1.tagValues(
@@ -122,10 +126,7 @@ describe('get fields', () => {
   test('success', () => {
     const fs = require('fs')
     const csv = fs.readFileSync(__dirname + '/schema1.csv', 'utf8')
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(csv)
-
+    let httpResponse = prepareResponse(csv, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     let fields = client.getFields(configParams)
@@ -141,6 +142,7 @@ describe('get fields', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":\"import \\"influxdata/influxdb/v1\\" bucket = \\"my-bucket\\" measurement = \\"circleci\\" start_range = duration(v: uint(v: 1970-01-01) - uint(v: now())) v1.tagKeys( bucket: bucket, predicate: (r) => r._measurement == measurement, start: start_range ) |> filter(fn: (r) => r._value != \\"_start\\" and r._value != \\"_stop\\" and r._value != \\"_measurement\\" and r._value != \\"_field\\") |> yield(name: \\"tags\\") from(bucket: bucket) |> range(start: start_range) |> filter(fn: (r) => r[\\"_measurement\\"] == measurement) |> keep(fn: (column) => column == \\"_field\\" or column == \\"_value\\") |> unique(column: \\"_field\\") |> yield(name: \\"fields\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
@@ -252,10 +254,7 @@ describe('get fields', () => {
   test('replace spaces in name', () => {
     const fs = require('fs')
     const csv = fs.readFileSync(__dirname + '/schema2.csv', 'utf8')
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(csv)
-
+    let httpResponse = prepareResponse(csv, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     let names = client.getFields(configParams).map(function (field) {
@@ -282,10 +281,7 @@ describe('get fields', () => {
   test('COVID-19 template', () => {
     const fs = require('fs')
     const csv = fs.readFileSync(__dirname + '/schema3.csv', 'utf8')
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(csv)
-
+    let httpResponse = prepareResponse(csv, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     let fields = client.getFields(configParams)
@@ -362,10 +358,7 @@ describe('get fields', () => {
   test('Large Schema', () => {
     const fs = require('fs')
     const csv = fs.readFileSync(__dirname + '/schema4.csv', 'utf8')
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(csv)
-
+    let httpResponse = prepareResponse(csv, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     let fields = client.getFields(configParams)
@@ -576,10 +569,7 @@ describe('get data', () => {
   beforeEach(() => {
     const fs = require('fs')
     const csv = fs.readFileSync(__dirname + '/data.csv', 'utf8')
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(csv)
-
+    let httpResponse = prepareResponse(csv, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     configParams = {}
@@ -614,6 +604,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
@@ -727,6 +718,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
@@ -894,6 +886,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
@@ -951,6 +944,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
@@ -983,6 +977,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
@@ -1002,15 +997,13 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: time(v: 1), stop: now()) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
 
   test('empty result', () => {
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue('')
-
+    let httpResponse = prepareResponse('', 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     let rows = client.getData(
@@ -1045,6 +1038,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
@@ -1071,6 +1065,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> sort(columns: [\\"_time\\"], desc: true) |> limit(n:1) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
@@ -1097,6 +1092,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") |> limit(n:10) ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   })
@@ -1109,10 +1105,7 @@ describe('get data', () => {
 ,,0,52349,0.158,14022,1.156,9314,0.064,"Turkish Minister for Health said 7286 tests were conducted on 25th March, so we can subtract that from 26th March figure. This is consistent with Wikipedia",https://covid-19-schweiz.bagapps.ch/de-3.html,COVID Tracking Project
 
 `
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(response)
-
+    let httpResponse = prepareResponse(response, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
 
     let rows = client.getData(
@@ -1143,6 +1136,7 @@ describe('get data', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":"from(bucket: \\"my-bucket\\") |> range(start: 2020-04-20T00:00:00Z, stop: 2020-05-20T23:59:59Z) |> filter(fn: (r) => r[\\"_measurement\\"] == \\"circleci\\") |> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\")  ", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
 
@@ -1227,10 +1221,7 @@ describe('schema query', () => {
 
     const fs = require('fs')
     const csv = fs.readFileSync(__dirname + '/schema1.csv', 'utf8')
-    let httpResponse = jest.fn()
-    httpResponse.getContentText = jest.fn()
-    httpResponse.getContentText.mockReturnValue(csv)
-
+    let httpResponse = prepareResponse(csv, 200)
     UrlFetchApp.fetch.mockReturnValue(httpResponse)
   })
 
@@ -1258,7 +1249,80 @@ describe('schema query', () => {
         'User-Agent': 'influxdb-gds-connector',
       },
       method: 'post',
+      muteHttpExceptions: true,
       payload: `{"query":\"import \\"influxdata/influxdb/v1\\" bucket = \\"my-bucket\\" measurement = \\"circleci\\" start_range = ${expectedRange} v1.tagKeys( bucket: bucket, predicate: (r) => r._measurement == measurement, start: start_range ) |> filter(fn: (r) => r._value != \\"_start\\" and r._value != \\"_stop\\" and r._value != \\"_measurement\\" and r._value != \\"_field\\") |> yield(name: \\"tags\\") from(bucket: bucket) |> range(start: start_range) |> filter(fn: (r) => r[\\"_measurement\\"] == measurement) |> keep(fn: (column) => column == \\"_field\\" or column == \\"_value\\") |> unique(column: \\"_field\\") |> yield(name: \\"fields\\")", "type":"flux", "dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`,
     })
   }
 })
+
+describe('contentTextOrThrowUserError', () => {
+  test('success', () => {
+    let response = client._contentTextOrThrowUserError(
+      prepareResponse('OK', 200)
+    )
+    expect(response).toEqual('OK')
+  })
+  test('error body', () => {
+    let response = prepareResponse('error body', 500)
+    expect(() => client._contentTextOrThrowUserError(response)).toThrow(
+      'error body'
+    )
+  })
+  test('from header', () => {
+    let response = prepareResponse('error body', 500, {
+      'x-InfluxDB-error': 'header error',
+    })
+    expect(() => client._contentTextOrThrowUserError(response)).toThrow(
+      'header error'
+    )
+  })
+  test('debug text', () => {
+    let response = prepareResponse('error body', 500, {
+      'x-InfluxDB-error': 'header error',
+    })
+    try {
+      client._contentTextOrThrowUserError(response, 'from() |> ')
+      fail()
+    } catch (e) {
+      expect(e.debugText).toEqual(
+        JSON.stringify(
+          {
+            responseCode: 500,
+            headers: {'x-InfluxDB-error': 'header error'},
+            contentText: 'error body',
+            payload: 'from() |> ',
+          },
+          null,
+          4
+        )
+      )
+      expect(e.fluxQuery).toEqual('from() |> ')
+    }
+  })
+  test('flux query json', () => {
+    let response = prepareResponse('error body', 500, {
+      'x-InfluxDB-error': 'header error',
+    })
+    try {
+      client._contentTextOrThrowUserError(
+        response,
+        `{"query":"from(bucket: \\"my-bucket\\")"}`,
+        'application/json'
+      )
+      fail()
+    } catch (e) {
+      expect(e.fluxQuery).toEqual('from(bucket: "my-bucket")')
+    }
+  })
+})
+
+function prepareResponse(contentText, responseCode, headers) {
+  let httpResponse = jest.fn()
+  httpResponse.getContentText = jest.fn()
+  httpResponse.getContentText.mockReturnValue(contentText)
+  httpResponse.getResponseCode = jest.fn()
+  httpResponse.getResponseCode.mockReturnValue(responseCode)
+  httpResponse.getHeaders = jest.fn()
+  httpResponse.getHeaders.mockReturnValue(headers)
+  return httpResponse
+}

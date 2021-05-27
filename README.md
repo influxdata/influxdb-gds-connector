@@ -113,6 +113,8 @@ You can optimize this query by `Schema Query Range` configuration in first step 
 
 <img src="docs/datastudio-schema-query-range.png" height="350px">
 
+then the `start_range` of query will be `-6h`.
+
 #### Data query
 
 It is used for retrieve data from InfluxDB. 

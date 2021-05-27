@@ -64,10 +64,7 @@ function getFields(request, cached, client) {
 
     return fields
   } catch (e) {
-    throwUserError(
-      `"GetFields from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`,
-      e
-    )
+    throwUserError(`Cannot retrieve a Schema of your Measurement`, e)
   }
 }
 
@@ -132,10 +129,7 @@ function getConfig(request) {
         )
       })
     } catch (e) {
-      throwUserError(
-        `"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`,
-        e
-      )
+      throwUserError(`Cannot retrieve a list of Buckets`, e)
     }
   }
 
@@ -159,10 +153,7 @@ function getConfig(request) {
         )
       })
     } catch (e) {
-      throwUserError(
-        `"GetMeasurements from: ${configParams.INFLUXDB_URL}" returned an error:${e}`,
-        e
-      )
+      throwUserError(`Cannot retrieve a list of Measurements`, e)
     }
   }
 
@@ -234,7 +225,7 @@ function getData(request) {
     }
   } catch (e) {
     throwUserError(
-      `"GetData from: ${request.configParams.INFLUXDB_URL}" for fields: ${fieldsFiltered} returned an error:${e}`,
+      `Cannot retrieve Data`,
       e
     )
   }
@@ -257,14 +248,22 @@ function validateConfig(configParams) {
  * Throws User-facing errors.
  *
  * @param  {string} message Error message.
- * @param {string} error original Error
+ * @param {InfluxDBError|Error|string} error original Error
  */
 function throwUserError(message, error) {
-  console.error('The connector yielded an error: ' + error)
+  let debugText = error.debugText ? error.debugText : error
+  console.error(
+    `The connector yielded an error: ${error}, message: ${message}, debugText: ${debugText}.`
+  )
+  let text = error.message
+    ? `${message}. InfluxDB Error Response: "${error.message}"${
+        error.fluxQuery ? '. Requested Query: "' + error.fluxQuery + '"' : ''
+      }`
+    : message
   DataStudioApp.createCommunityConnector()
     .newUserError()
-    .setText(message)
-    .setDebugText(error)
+    .setText(text)
+    .setDebugText(debugText)
     .throwException()
 }
 
