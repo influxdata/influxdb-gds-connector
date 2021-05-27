@@ -314,7 +314,16 @@ InfluxDBClient.prototype._query = function (
     configs.contentType
   )
 
-  return configs.mapping(response)
+  try {
+    return configs.mapping(response)
+  } catch (e) {
+    throw _createInfluxDBError(
+      e.message,
+      httpResponse,
+      query,
+      configs.contentType
+    )
+  }
 }
 
 InfluxDBClient.prototype._extractSchema = function (textContent) {
@@ -337,6 +346,7 @@ InfluxDBClient.prototype._extractSchema = function (textContent) {
 
 InfluxDBClient.prototype._extractData = function (textContent) {
   let processNextTable = true
+  let parsingStateError = false
   let table
   let tables = []
 
@@ -354,7 +364,9 @@ InfluxDBClient.prototype._extractData = function (textContent) {
     .split('\n')
     .filter(line => line.trim().length !== 0)
     .forEach(line => {
-      if (line.startsWith('#group')) {
+      if (parsingStateError) {
+        throw new Error(line.split(',')[1])
+      } else if (line.startsWith('#group')) {
         prepareTable()
         table.group = line.split(',').map(it => it.trim())
       } else if (line.startsWith('#datatype')) {
@@ -363,6 +375,8 @@ InfluxDBClient.prototype._extractData = function (textContent) {
       } else if (line.startsWith('#default')) {
         prepareTable()
         table.defaults = line.split(',').map(it => it.trim())
+      } else if (line.startsWith(',error,reference')) {
+        parsingStateError = true
       } else if (line.startsWith(',result,table,')) {
         prepareTable()
         table.names = line.split(',').map(it => it.trim())
@@ -394,7 +408,7 @@ InfluxDBClient.prototype._buildURL = function (configParams) {
 /**
  * Get Content Response Text or Throw InfluxDBError
  *
- * @param  {HTTPResponse} response Error message.
+ * @param  {HTTPResponse} response HTTP message.
  * @param  {string?} payload HTTP payload.
  * @param  {string} queryContentType Type of query
  */
@@ -419,15 +433,26 @@ InfluxDBClient.prototype._contentTextOrThrowUserError = function (
       )[0]
     : null
 
+  const message = errorHeader ? headers[errorHeader] : response.getContentText()
+
+  throw _createInfluxDBError(message, response, payload, queryContentType)
+}
+
+/**
+ * CreateInfluxDBError
+ *
+ * @param  {string} message Error message.
+ * @param  {HTTPResponse} response HTTP message.
+ * @param  {string?} payload HTTP payload.
+ * @param  {string} queryContentType Type of query
+ */
+function _createInfluxDBError(message, response, payload, queryContentType) {
   const debugInformation = {
-    responseCode: responseCode,
-    headers: headers,
+    responseCode: response.getResponseCode(),
+    headers: response.getHeaders(),
     contentText: response.getContentText(),
     payload: payload,
   }
-  const message = errorHeader
-    ? headers[errorHeader]
-    : debugInformation.contentText
 
   let fluxQuery = payload
   if ('application/json' === queryContentType) {
@@ -439,7 +464,7 @@ InfluxDBClient.prototype._contentTextOrThrowUserError = function (
     }
   }
 
-  throw new InfluxDBError(message, debugInformation, fluxQuery)
+  return new InfluxDBError(message, debugInformation, fluxQuery)
 }
 
 function _sanitizeFieldName(name) {

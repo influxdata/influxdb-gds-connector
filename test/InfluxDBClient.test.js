@@ -545,6 +545,17 @@ describe('get fields', () => {
       },
     })
   })
+
+  test('Response with Error', () => {
+    const fs = require('fs')
+    const csv = fs.readFileSync(__dirname + '/schemaError.csv', 'utf8')
+    let httpResponse = prepareResponse(csv, 200)
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+
+    expect(() => client.getFields(configParams)).toThrow(
+      'panic: unreachable cursor type: <nil>'
+    )
+  })
 })
 
 describe('get data', () => {

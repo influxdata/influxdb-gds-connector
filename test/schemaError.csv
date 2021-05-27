@@ -1,0 +1,14 @@
+#datatype,string,long,string
+#group,false,false,false
+#default,tags,,
+,result,table,_value
+,,0,cluster_id
+,,0,cpu
+,,0,host
+
+
+#datatype,string,string
+#group,true,true
+#default,,
+,error,reference
+,panic: unreachable cursor type: <nil>,

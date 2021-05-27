@@ -224,10 +224,7 @@ function getData(request) {
       filtersApplied: false,
     }
   } catch (e) {
-    throwUserError(
-      `Cannot retrieve Data`,
-      e
-    )
+    throwUserError(`Cannot retrieve Data`, e)
   }
 }
 
