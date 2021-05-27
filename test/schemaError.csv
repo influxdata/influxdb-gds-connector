@@ -1,5 +1,5 @@
-#datatype,string,long,string
 #group,false,false,false
+#datatype,string,long,string
 #default,tags,,
 ,result,table,_value
 ,,0,cluster_id
@@ -7,8 +7,8 @@
 ,,0,host
 
 
-#datatype,string,string
 #group,true,true
+#datatype,string,string
 #default,,
 ,error,reference
 ,panic: unreachable cursor type: <nil>,

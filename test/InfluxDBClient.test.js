@@ -1155,6 +1155,22 @@ describe('get data', () => {
     rows.forEach(row => expect(row.values).toHaveLength(2))
     expect(rows[0].values).toEqual([52349, 1.156])
   })
+
+  test('error in response', () => {
+    const fs = require('fs')
+    const csv = fs.readFileSync(__dirname + '/dataError.csv', 'utf8')
+    let httpResponse = prepareResponse(csv, 200)
+    UrlFetchApp.fetch.mockReturnValue(httpResponse)
+
+    expect(() =>
+      client.getData(
+        configParams,
+        {sampleExtraction: false},
+        {startDate: '2020-04-20', endDate: '2020-05-20'},
+        fields
+      )
+    ).toThrow('panic: unreachable cursor type: <nil>')
+  })
 })
 
 describe('build URL', () => {
