@@ -36,6 +36,7 @@ function getFields(request, cached, client) {
     request.configParams.INFLUXDB_URL,
     request.configParams.INFLUXDB_BUCKET,
     request.configParams.INFLUXDB_MEASUREMENT,
+    request.configParams.INFLUXDB_SCHEMA_RANGE,
   ].join('#')
 
   if (cached) {
@@ -63,10 +64,7 @@ function getFields(request, cached, client) {
 
     return fields
   } catch (e) {
-    throwUserError(
-      `"GetFields from: ${request.configParams.INFLUXDB_URL}" returned an error:${e}`,
-      e
-    )
+    throwUserError(`Cannot retrieve a Schema of your Measurement`, e)
   }
 }
 
@@ -131,10 +129,7 @@ function getConfig(request) {
         )
       })
     } catch (e) {
-      throwUserError(
-        `"GetBuckets from: ${configParams.INFLUXDB_URL}" returned an error:${e}`,
-        e
-      )
+      throwUserError(`Cannot retrieve a list of Buckets`, e)
     }
   }
 
@@ -158,10 +153,7 @@ function getConfig(request) {
         )
       })
     } catch (e) {
-      throwUserError(
-        `"GetMeasurements from: ${configParams.INFLUXDB_URL}" returned an error:${e}`,
-        e
-      )
+      throwUserError(`Cannot retrieve a list of Measurements`, e)
     }
   }
 
@@ -177,19 +169,22 @@ function getConfig(request) {
 
   if (isBucketEmpty || isMeasurementEmpty) {
     config.setIsSteppedConfig(true)
+  } else {
+    config
+      .newInfo()
+      .setId('instructions-optimization')
+      .setText(
+        'How to optimize data - https://github.com/influxdata/influxdb-gds-connector#data-optimize.'
+      )
+
+    config
+      .newTextInput()
+      .setId('INFLUXDB_SCHEMA_RANGE')
+      .setName('Schema Query Range')
+      .setHelpText(
+        'Specify the oldest time to include in results of the "Schema query". The value has to be specified as a negative "Duration", e.g.: -6h, -12h, -1w. The default behaviour is retrieve all data.'
+      )
   }
-  // else {
-  //   config
-  //     .newSelectSingle()
-  //     .setId('INFLUXDB_AGGREGATION')
-  //     .setName('Aggregation')
-  //     .setHelpText(
-  //       'Select the type of query results aggregation. The "Last" option select only last row from each Time Series.'
-  //     )
-  //     .setAllowOverride(false)
-  //     .addOption(config.newOptionBuilder().setLabel('None').setValue('NONE'))
-  //     .addOption(config.newOptionBuilder().setLabel('Last').setValue('LAST'))
-  // }
 
   config.setDateRangeRequired(true)
 
@@ -221,7 +216,7 @@ function getData(request) {
       fieldsFiltered
     )
 
-    Logger.log('GetData took: "%s" milliseconds. [%s]', new Date() - start)
+    Logger.log('GetData took: "%s" milliseconds.', new Date() - start)
 
     return {
       schema: fieldsFiltered,
@@ -229,10 +224,7 @@ function getData(request) {
       filtersApplied: false,
     }
   } catch (e) {
-    throwUserError(
-      `"GetData from: ${request.configParams.INFLUXDB_URL}" for fields: ${fieldsFiltered} returned an error:${e}`,
-      e
-    )
+    throwUserError(`Cannot retrieve Data`, e)
   }
 }
 
@@ -253,14 +245,22 @@ function validateConfig(configParams) {
  * Throws User-facing errors.
  *
  * @param  {string} message Error message.
- * @param {string} error original Error
+ * @param {InfluxDBError|Error|string} error original Error
  */
 function throwUserError(message, error) {
-  console.error('The connector yielded an error: ' + error)
+  let debugText = error.debugText ? error.debugText : error
+  console.error(
+    `The connector yielded an error: ${error}, message: ${message}, debugText: ${debugText}.`
+  )
+  let text = error.message
+    ? `${message}. InfluxDB Error Response: "${error.message}"${
+        error.fluxQuery ? '. Requested Query: "' + error.fluxQuery + '"' : ''
+      }`
+    : message
   DataStudioApp.createCommunityConnector()
     .newUserError()
-    .setText(message)
-    .setDebugText(error)
+    .setText(text)
+    .setDebugText(debugText)
     .throwException()
 }
 

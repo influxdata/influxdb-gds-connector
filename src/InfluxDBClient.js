@@ -13,30 +13,30 @@ v1.tagValues(
   start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
 )`
 
-const QUERY_TAGS = (bucket_name, measurement_name) =>
-  `import "influxdata/influxdb/v1"
+const QUERY_SCHEMA = (bucket_name, measurement_name, schema_range) => {
+  let start_range = schema_range
+    ? schema_range
+    : `duration(v: uint(v: 1970-01-01) - uint(v: now()))`
+  let query =
+    `import \\"influxdata/influxdb/v1\\" ` +
+    `bucket = \\"${bucket_name}\\" ` +
+    `measurement = \\"${measurement_name}\\" ` +
+    `start_range = ${start_range} ` +
+    `v1.tagKeys( ` +
+    `bucket: bucket, ` +
+    `predicate: (r) => r._measurement == measurement, ` +
+    `start: start_range ` +
+    `) |> filter(fn: (r) => r._value != \\"_start\\" and r._value != \\"_stop\\" and r._value != \\"_measurement\\" and r._value != \\"_field\\") ` +
+    `|> yield(name: \\"tags\\") ` +
+    `from(bucket: bucket) ` +
+    `|> range(start: start_range) ` +
+    `|> filter(fn: (r) => r[\\"_measurement\\"] == measurement) ` +
+    `|> keep(fn: (column) => column == \\"_field\\" or column == \\"_value\\") ` +
+    `|> unique(column: \\"_field\\") ` +
+    `|> yield(name: \\"fields\\")`
 
-v1.tagKeys(
-  bucket: "${bucket_name}",
-  predicate: (r) => r._measurement == "${measurement_name}",
-  start: duration(v: uint(v: 1970-01-01) - uint(v: now()))
-)
-|> filter(fn: (r) => r._value != "_start" and r._value != "_stop" and r._value != "_measurement" and r._value != "_field")`
-
-const QUERY_FIELDS = (bucket_name, measurement_name, tags) => {
-  let concat = tags
-    .map(function (tag) {
-      return `\\"${tag}\\"`
-    })
-    .join(', ')
   return (
-    `{"query":"from(bucket: \\"${bucket_name}\\") ` +
-    `|> range(start: time(v: 1)) ` +
-    `|> filter(fn: (r) => r[\\"_measurement\\"] == \\"${measurement_name}\\") ` +
-    `|> drop(columns: [${concat}]) ` +
-    `|> pivot(rowKey:[\\"_time\\"], columnKey: [\\"_field\\"], valueColumn: \\"_value\\") ` +
-    `|> drop(columns: [\\"_start\\", \\"_stop\\", \\"_time\\", \\"_measurement\\"]) ` +
-    `|> limit(n:1)", ` +
+    `{"query":"${query}", ` +
     `"type":"flux", ` +
     `"dialect":{"header":true,"delimiter":",","annotations":["datatype","group","default"],"commentPrefix":"#","dateTimeFormat":"RFC3339"}}`
   )
@@ -144,6 +144,8 @@ InfluxDBClient.prototype.getMeasurements = function (configParams) {
  * @returns fields definition
  */
 InfluxDBClient.prototype.getFields = function (configParams) {
+  const result = []
+  const tags = []
   const fields = []
 
   const measurement = {}
@@ -152,38 +154,50 @@ InfluxDBClient.prototype.getFields = function (configParams) {
   measurement.dataType = 'STRING'
   measurement.semantics = {}
   measurement.semantics.conceptType = 'DIMENSION'
-  fields.push(measurement)
+  result.push(measurement)
 
-  let queryTags = QUERY_TAGS(
-    configParams.INFLUXDB_BUCKET,
-    configParams.INFLUXDB_MEASUREMENT
-  )
-  let tags = this._query(configParams, queryTags)
-
-  tags.forEach(tag => {
-    const field = {}
-    field.name = _sanitizeFieldName(tag)
-    field.label = tag
-    field.dataType = 'STRING'
-    field.semantics = {}
-    field.semantics.conceptType = 'DIMENSION'
-    fields.push(field)
-  })
-
-  let queryFields = QUERY_FIELDS(
+  let querySchema = QUERY_SCHEMA(
     configParams.INFLUXDB_BUCKET,
     configParams.INFLUXDB_MEASUREMENT,
-    tags
+    configParams.INFLUXDB_SCHEMA_RANGE
   )
 
-  let tables = this._query(configParams, queryFields, {
+  let tables = this._query(configParams, querySchema, {
     mapping: this._extractData,
     contentType: 'application/json',
   })
 
   tables.forEach(table => {
-    table.fields.forEach(field => fields.push(field))
+    let type = table.defaults[1]
+    let csv = Utilities.parseCsv(table.rows.join('\n'), ',')
+    let value_index = table.names.indexOf('_value')
+    switch (type) {
+      case 'fields':
+        let field_index = table.names.indexOf('_field')
+        csv.forEach(row => {
+          let name = row[field_index]
+          let dataType = table.data_types[value_index]
+          let field = parseFieldSchema(name, dataType)
+          fields.push(field)
+        })
+        break
+      case 'tags':
+        csv.forEach(row => {
+          let tag = row[value_index].trim()
+          const field = {}
+          field.name = _sanitizeFieldName(tag)
+          field.label = tag
+          field.dataType = 'STRING'
+          field.semantics = {}
+          field.semantics.conceptType = 'DIMENSION'
+          tags.push(field)
+        })
+        break
+    }
   })
+
+  result.push(...tags)
+  result.push(...fields)
 
   const timestamp = {}
   timestamp.name = '_time'
@@ -194,9 +208,9 @@ InfluxDBClient.prototype.getFields = function (configParams) {
   timestamp.semantics.conceptType = 'DIMENSION'
   timestamp.semantics.semanticType = TIMESTAMP_SEMANTICS_TYPE
   timestamp.semantics.semanticGroup = TIMESTAMP_SEMANTICS_GROUP
-  fields.push(timestamp)
+  result.push(timestamp)
 
-  return fields
+  return result
 }
 
 /**
@@ -282,6 +296,7 @@ InfluxDBClient.prototype._query = function (
 ) {
   const options = {
     method: 'post',
+    muteHttpExceptions: true,
     payload: query,
     contentType: configs.contentType,
     headers: {
@@ -291,9 +306,24 @@ InfluxDBClient.prototype._query = function (
     },
   }
   let url = this._buildURL(configParams)
-  const response = UrlFetchApp.fetch(url, options).getContentText()
+  let httpResponse = UrlFetchApp.fetch(url, options)
 
-  return configs.mapping(response)
+  const response = this._contentTextOrThrowUserError(
+    httpResponse,
+    query,
+    configs.contentType
+  )
+
+  try {
+    return configs.mapping(response)
+  } catch (e) {
+    throw _createInfluxDBError(
+      e.message,
+      httpResponse,
+      query,
+      configs.contentType
+    )
+  }
 }
 
 InfluxDBClient.prototype._extractSchema = function (textContent) {
@@ -316,6 +346,7 @@ InfluxDBClient.prototype._extractSchema = function (textContent) {
 
 InfluxDBClient.prototype._extractData = function (textContent) {
   let processNextTable = true
+  let parsingStateError = false
   let table
   let tables = []
 
@@ -333,7 +364,9 @@ InfluxDBClient.prototype._extractData = function (textContent) {
     .split('\n')
     .filter(line => line.trim().length !== 0)
     .forEach(line => {
-      if (line.startsWith('#group')) {
+      if (parsingStateError) {
+        throw new Error(line.split(',')[1])
+      } else if (line.startsWith('#group')) {
         prepareTable()
         table.group = line.split(',').map(it => it.trim())
       } else if (line.startsWith('#datatype')) {
@@ -342,6 +375,8 @@ InfluxDBClient.prototype._extractData = function (textContent) {
       } else if (line.startsWith('#default')) {
         prepareTable()
         table.defaults = line.split(',').map(it => it.trim())
+      } else if (line.startsWith(',error,reference')) {
+        parsingStateError = true
       } else if (line.startsWith(',result,table,')) {
         prepareTable()
         table.names = line.split(',').map(it => it.trim())
@@ -370,12 +405,106 @@ InfluxDBClient.prototype._buildURL = function (configParams) {
   return url
 }
 
+/**
+ * Get Content Response Text or Throw InfluxDBError
+ *
+ * @param  {HTTPResponse} response HTTP message.
+ * @param  {string?} payload HTTP payload.
+ * @param  {string} queryContentType Type of query
+ */
+InfluxDBClient.prototype._contentTextOrThrowUserError = function (
+  response,
+  payload,
+  queryContentType = 'application/vnd.flux'
+) {
+  const responseCode = response.getResponseCode()
+  if (responseCode >= 200 && responseCode <= 299) {
+    return response.getContentText()
+  }
+
+  const headers = response.getHeaders()
+  const errorHeader = headers
+    ? Object.keys(headers).filter(header =>
+        [
+          'x-platform-error-code',
+          'x-influx-error',
+          'x-influxdb-error',
+        ].includes(header.toLowerCase())
+      )[0]
+    : null
+
+  const message = errorHeader ? headers[errorHeader] : response.getContentText()
+
+  throw _createInfluxDBError(message, response, payload, queryContentType)
+}
+
+/**
+ * CreateInfluxDBError
+ *
+ * @param  {string} message Error message.
+ * @param  {HTTPResponse} response HTTP message.
+ * @param  {string?} payload HTTP payload.
+ * @param  {string} queryContentType Type of query
+ */
+function _createInfluxDBError(message, response, payload, queryContentType) {
+  const debugInformation = {
+    responseCode: response.getResponseCode(),
+    headers: response.getHeaders(),
+    contentText: response.getContentText(),
+    payload: payload,
+  }
+
+  let fluxQuery = payload
+  if ('application/json' === queryContentType) {
+    try {
+      let jsonPayload = JSON.parse(payload)
+      fluxQuery = jsonPayload.query ? jsonPayload.query : payload
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  return new InfluxDBError(message, debugInformation, fluxQuery)
+}
+
 function _sanitizeFieldName(name) {
   return name.replace(/\s/g, '__space__').replace(/-/g, '__minus__')
 }
 
 function _toOriginalFieldName(name) {
   return name.replace(/__space__/g, ' ').replace(/__minus__/g, '-')
+}
+
+function parseFieldSchema(name, type) {
+  const field = {}
+  field.name = _sanitizeFieldName(name.trim())
+  field.label = name.trim()
+  field.semantics = {}
+  field.semantics.conceptType = 'METRIC'
+  field.semantics.isReaggregatable = false
+
+  switch (type.trim()) {
+    case 'double':
+    case 'long':
+    case 'unsignedLong':
+      field.dataType = 'NUMBER'
+      field.semantics.semanticGroup = 'NUMBER'
+      field.semantics.isReaggregatable = true
+      break
+    case 'boolean':
+      field.dataType = 'BOOLEAN'
+      break
+    case 'dateTime:RFC3339':
+      field.dataType = 'STRING'
+      field.semantics.semanticType = TIMESTAMP_SEMANTICS_TYPE
+      field.semantics.semanticGroup = TIMESTAMP_SEMANTICS_GROUP
+      break
+    default:
+      field.dataType = 'STRING'
+      break
+  }
+
+  return field
 }
 
 class InfluxDBTable {
@@ -392,35 +521,17 @@ class InfluxDBTable {
     let data_types = this.data_types.slice(3)
     let names = this.names.slice(3)
     data_types.forEach((type, index) => {
-      const field = {}
-      field.name = _sanitizeFieldName(names[index].trim())
-      field.label = names[index].trim()
-      field.semantics = {}
-      field.semantics.conceptType = 'METRIC'
-      field.semantics.isReaggregatable = false
-
-      switch (type.trim()) {
-        case 'double':
-        case 'long':
-        case 'unsignedLong':
-          field.dataType = 'NUMBER'
-          field.semantics.semanticGroup = 'NUMBER'
-          field.semantics.isReaggregatable = true
-          break
-        case 'boolean':
-          field.dataType = 'BOOLEAN'
-          break
-        case 'dateTime:RFC3339':
-          field.dataType = 'STRING'
-          field.semantics.semanticType = TIMESTAMP_SEMANTICS_TYPE
-          field.semantics.semanticGroup = TIMESTAMP_SEMANTICS_GROUP
-          break
-        default:
-          field.dataType = 'STRING'
-          break
-      }
+      const field = parseFieldSchema(names[index], type)
       this.fields.push(field)
     })
+  }
+}
+
+class InfluxDBError extends Error {
+  constructor(message, debugInformation, fluxQuery) {
+    super(message)
+    this.debugText = JSON.stringify(debugInformation, null, 4)
+    this.fluxQuery = fluxQuery
   }
 }
 
