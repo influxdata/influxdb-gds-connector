@@ -1,5 +1,7 @@
 ## [unreleased]
 
+## 2021.10 [2021-10-22]
+
 ### Bug Fixes
 1. [#9](https://github.com/influxdata/influxdb-gds-connector/pull/9): Optimize Schema Query
 
