@@ -1,5 +1,8 @@
 ## [unreleased]
 
+### CI
+1. [#20](https://github.com/influxdata/influxdb-gds-connector/pull/20): Use new Codecov uploader for reporting code coverage
+
 ## 2021.10 [2021-10-22]
 
 ### Bug Fixes
