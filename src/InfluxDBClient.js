@@ -203,6 +203,7 @@ InfluxDBClient.prototype.getFields = function (configParams) {
   timestamp.name = '_time'
   timestamp.label = 'time'
   timestamp.dataType = 'STRING'
+  timestamp.defaultAggregationType = 'NONE'
   timestamp.semantics = {}
   timestamp.semantics.isReaggregatable = false
   timestamp.semantics.conceptType = 'DIMENSION'
