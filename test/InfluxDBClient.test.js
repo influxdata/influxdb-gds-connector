@@ -240,6 +240,7 @@ describe('get fields', () => {
     })
     expect(fields[10]).toEqual({
       dataType: 'STRING',
+      defaultAggregationType: 'NONE',
       label: 'time',
       name: '_time',
       semantics: {
@@ -344,6 +345,7 @@ describe('get fields', () => {
     })
     expect(fields[6]).toEqual({
       dataType: 'STRING',
+      defaultAggregationType: 'NONE',
       label: 'time',
       name: '_time',
       semantics: {
@@ -535,6 +537,7 @@ describe('get fields', () => {
     })
     expect(fields[1088]).toEqual({
       dataType: 'STRING',
+      defaultAggregationType: 'NONE',
       label: 'time',
       name: '_time',
       semantics: {

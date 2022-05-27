@@ -1,5 +1,8 @@
 ## [unreleased]
 
+### Bug Fixes
+1. [#23](https://github.com/influxdata/influxdb-gds-connector/pull/23): `time` field is mark as a dimension
+
 ### CI
 1. [#20](https://github.com/influxdata/influxdb-gds-connector/pull/20): Use new Codecov uploader for reporting code coverage
 
