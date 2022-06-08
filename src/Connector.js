@@ -254,8 +254,8 @@ function throwUserError(message, error) {
   )
   let text = error.message
     ? `${message}. InfluxDB Error Response: "${error.message}"${
-        error.fluxQuery ? '. Requested Query: "' + error.fluxQuery + '"' : ''
-      }`
+        error.contentMessage ? '. Message: "' + error.contentMessage + '"' : ''
+      }${error.fluxQuery ? '. Requested Query: "' + error.fluxQuery + '"' : ''}`
     : message
   DataStudioApp.createCommunityConnector()
     .newUserError()
