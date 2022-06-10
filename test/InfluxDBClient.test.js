@@ -1329,6 +1329,22 @@ describe('contentTextOrThrowUserError', () => {
       expect(e.fluxQuery).toEqual('from() |> ')
     }
   })
+  test('contentMessage', () => {
+    let response = prepareResponse(
+      '{"code":"not found","message":"organization name \\"my-org\\" not found"}',
+      500,
+      {
+        'x-InfluxDB-error': 'header error',
+        'Content-Type': 'application/json; charset=utf-8',
+      }
+    )
+    try {
+      client._contentTextOrThrowUserError(response, 'from() |> ')
+      fail()
+    } catch (e) {
+      expect(e.contentMessage).toEqual('organization name "my-org" not found')
+    }
+  })
   test('flux query json', () => {
     let response = prepareResponse('error body', 500, {
       'x-InfluxDB-error': 'header error',

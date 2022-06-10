@@ -448,9 +448,10 @@ InfluxDBClient.prototype._contentTextOrThrowUserError = function (
  * @param  {string} queryContentType Type of query
  */
 function _createInfluxDBError(message, response, payload, queryContentType) {
+  let headers = response.getHeaders()
   const debugInformation = {
     responseCode: response.getResponseCode(),
-    headers: response.getHeaders(),
+    headers: headers,
     contentText: response.getContentText(),
     payload: payload,
   }
@@ -465,7 +466,21 @@ function _createInfluxDBError(message, response, payload, queryContentType) {
     }
   }
 
-  return new InfluxDBError(message, debugInformation, fluxQuery)
+  let contentMessage
+  if (
+    headers &&
+    headers['Content-Type'] &&
+    headers['Content-Type'].includes('application/json')
+  ) {
+    try {
+      let jsonPayload = JSON.parse(response.getContentText())
+      contentMessage = jsonPayload.message
+    } catch (e) {
+      console.debug(e)
+    }
+  }
+
+  return new InfluxDBError(message, debugInformation, fluxQuery, contentMessage)
 }
 
 function _sanitizeFieldName(name) {
@@ -529,10 +544,11 @@ class InfluxDBTable {
 }
 
 class InfluxDBError extends Error {
-  constructor(message, debugInformation, fluxQuery) {
+  constructor(message, debugInformation, fluxQuery, contentMessage) {
     super(message)
     this.debugText = JSON.stringify(debugInformation, null, 4)
     this.fluxQuery = fluxQuery
+    this.contentMessage = contentMessage
   }
 }
 

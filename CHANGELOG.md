@@ -1,5 +1,8 @@
 ## [unreleased]
 
+### Features
+1. [#25](https://github.com/influxdata/influxdb-gds-connector/pull/25): Add detail error message to error dialog
+
 ### Bug Fixes
 1. [#23](https://github.com/influxdata/influxdb-gds-connector/pull/23): `time` field is mark as a dimension
 
