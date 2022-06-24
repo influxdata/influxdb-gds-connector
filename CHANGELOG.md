@@ -1,4 +1,4 @@
-## [unreleased]
+## 2022.06 [2022-06-24]
 
 ### Features
 1. [#25](https://github.com/influxdata/influxdb-gds-connector/pull/25): Add detail error message to error dialog
