@@ -149,6 +149,10 @@ Open Apps Script project in your browser:
 $ yarn open
 ```
 
+or
+
+https://script.google.com/home/projects/18YPFhvO1TMR7QFCw2iFuIH_1_iPvFIYrnT3fg8J7skoqUd5x7YAnPD7_/edit
+
 Push your local changes to Apps Script:
 
 ```bash
